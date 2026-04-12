@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5" style="max-width: 500px;">
+    <h2>Add Transaction</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary w-100">Save</button>
+    </form>
+    <a href="{% url 'transaction_list' %}" class="btn btn-secondary w-100 mt-2">Cancel</a>
+</div>
+{% endblock %}

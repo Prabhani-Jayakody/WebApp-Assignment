@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Transaction
 from .forms import TransactionForm
+from django.db import models
 
 @login_required
 def dashboard(request):
@@ -43,6 +44,27 @@ def add_transaction(request):
         form = TransactionForm()
     return render(request, 'transactions/add_transaction.html', {'form': form})
 
+@login_required
+def dashboard(request):
+    transactions = Transaction.objects.filter(user=request.user).order_by('-date')[:10]
+    total_income = Transaction.objects.filter(
+        user=request.user, 
+        transaction_type='income'
+    ).aggregate(total=models.Sum('amount'))['total'] or 0
+    total_expenses = Transaction.objects.filter(
+        user=request.user, 
+        transaction_type='expense'
+    ).aggregate(total=models.Sum('amount'))['total'] or 0
+    balance = total_income - total_expenses
+    
+    context = {
+        'transactions': transactions,
+        'total_income': total_income,
+        'total_expenses': total_expenses,
+        'balance': balance,
+    }
+    return render(request, 'transactions/dashboard.html', context)
+    
 @login_required
 def transaction_list(request):
     transactions = Transaction.objects.filter(user=request.user).order_by('-date')

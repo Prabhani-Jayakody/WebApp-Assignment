@@ -8,3 +8,4 @@ urlpatterns = [
     path('transactions/', include('transactions.urls')),
     path('', RedirectView.as_view(url='/transactions/', permanent=False)),
 ]
+

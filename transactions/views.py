@@ -4,6 +4,33 @@ from .models import Transaction
 from .forms import TransactionForm
 
 @login_required
+def dashboard(request):
+    # Get user's transactions
+    transactions = Transaction.objects.filter(user=request.user).order_by('-date')[:10]
+    
+    # Calculate totals
+    total_income = Transaction.objects.filter(
+        user=request.user, 
+        transaction_type='income'
+    ).aggregate(sum=models.Sum('amount'))['sum'] or 0
+    
+    total_expenses = Transaction.objects.filter(
+        user=request.user, 
+        transaction_type='expense'
+    ).aggregate(sum=models.Sum('amount'))['sum'] or 0
+    
+    balance = total_income - total_expenses
+    
+    context = {
+        'transactions': transactions,
+        'total_income': total_income,
+        'total_expenses': total_expenses,
+        'balance': balance,
+    }
+    
+    return render(request, 'transactions/dashboard.html', context)
+
+@login_required
 def add_transaction(request):
     if request.method == 'POST':
         form = TransactionForm(request.POST)

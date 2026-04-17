@@ -45,7 +45,7 @@
                     <td>{{ t.date }}</td>
                     <td>{{ t.category }}</td>
                     <td>{{ t.description|default:"-" }}</td>
-                    <td class="{% if t.transaction_type == 'income' %}text-success{% else %}text-danger{% endif %}">
+                    <td class="{% if t.type == 'income' %}text-success{% else %}text-danger{% endif %}">
                         ${{ t.amount }}
                     </td>
                     <td>

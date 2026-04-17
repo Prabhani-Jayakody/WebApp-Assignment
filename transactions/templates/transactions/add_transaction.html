@@ -1,12 +1,33 @@
 {% extends 'base.html' %}
+
+{% block title %}Add Transaction{% endblock %}
+
 {% block content %}
-<div class="container mt-5" style="max-width: 500px;">
-    <h2>Add Transaction</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary w-100">Save</button>
-    </form>
-    <a href="{% url 'transaction_list' %}" class="btn btn-secondary w-100 mt-2">Cancel</a>
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">➕ Add New Transaction</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="text-danger small">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    
+                    <button type="submit" class="btn btn-primary w-100">Save Transaction</button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary w-100 mt-2">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

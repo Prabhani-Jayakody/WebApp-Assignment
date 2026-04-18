@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import models
 from .models import Transaction
 from .forms import TransactionForm
+from django.db.models.functions import TruncMonth
 
 @login_required
 def dashboard(request):
@@ -31,6 +32,48 @@ def dashboard(request):
         'balance': balance,
     }
     return render(request, 'transactions/dashboard.html', context)
+
+@login_required
+def reports(request):
+    transactions = Transaction.objects.filter(user=request.user)
+    
+    total_income = transactions.filter(type='income').aggregate(total=models.Sum('amount'))['total'] or 0
+    total_expenses = transactions.filter(type='expense').aggregate(total=models.Sum('amount'))['total'] or 0
+    
+    expenses_by_category = transactions.filter(type='expense').values('category').annotate(
+        total=models.Sum('amount')
+    ).order_by('-total')
+    category_names = {
+        '1': 'Food',
+        '2': 'Transport', 
+        '3': 'Bills',
+        '4': 'Shopping',
+        '5': 'Entertainment',
+        '6': 'Salary',
+        '7': 'Other',
+    }
+    
+    for item in expenses_by_category:
+        item['category_name'] = category_names.get(str(item['category']), item['category'])
+
+    monthly_summary = transactions.filter(
+        type='expense'
+    ).annotate(
+        month=TruncMonth('date')
+    ).values('month').annotate(
+        total=models.Sum('amount')
+    ).order_by('-month')[:6]
+    
+    context = {
+        'total_income': total_income,
+        'total_expenses': total_expenses,
+        'balance': total_income - total_expenses,
+        'expenses_by_category': expenses_by_category,
+        'category_names': category_names,
+        'monthly_summary': monthly_summary,
+        'transaction_count': transactions.count(),
+    }
+    return render(request, 'transactions/reports.html', context)
 
 @login_required
 def add_transaction(request):

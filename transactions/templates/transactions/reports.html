@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">📊 Spending Reports</h2>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5>💰 Total Income</h5>
+                <h2>${{ total_income }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h5>💸 Total Expenses</h5>
+                <h2>${{ total_expenses }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5>⚖️ Balance</h5>
+                <h2>${{ balance }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Expenses by Category -->
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">📂 Expenses by Category</h5>
+            </div>
+            <div class="card-body">
+                {% if expenses_by_category %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr><th>Category</th><th>Amount</th><th>%</th></tr>
+                            </thead>
+                            <tbody>
+                                {% for item in expenses_by_category %}
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            {% if item.category == 1 or item.category == '1' %}🍔 Food
+                                            {% elif item.category == 2 or item.category == '2' %}🚗 Transport
+                                            {% elif item.category == 3 or item.category == '3' %}💡 Bills
+                                            {% elif item.category == 4 or item.category == '4' %}🛍️ Shopping
+                                            {% elif item.category == 5 or item.category == '5' %}🎬 Entertainment
+                                            {% elif item.category == 6 or item.category == '6' %}💰 Salary
+                                            {% else %}📌 Other
+                                            {% endif %}
+                                        </strong>
+                                    </td>
+                                    <td class="text-danger">${{ item.total }}</td>
+                                    <td>
+                                        <div class="progress">
+                                            <div class="progress-bar bg-danger" 
+                                                 style="width: {% widthratio item.total total_expenses 100 %}%">
+                                                {% widthratio item.total total_expenses 100 %}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted">No expense data available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Summary -->
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">📅 Monthly Expenses</h5>
+            </div>
+            <div class="card-body">
+                {% if monthly_summary %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr><th>Month</th><th>Total Expenses</th></tr>
+                            </thead>
+                            <tbody>
+                                {% for item in monthly_summary %}
+                                <tr>
+                                    <td>{{ item.month|date:"F Y" }}</td>
+                                    <td class="text-danger">${{ item.total }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted">No expense data available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">📈 Quick Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <h4>{{ transaction_count }}</h4>
+                        <p class="text-muted">Total Transactions</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h4 class="text-success">${{ total_income }}</h4>
+                        <p class="text-muted">Total Income</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h4 class="text-danger">${{ total_expenses }}</h4>
+                        <p class="text-muted">Total Expenses</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a href="{% url 'dashboard' %}" class="btn btn-primary">← Back to Dashboard</a>
+</div>
+{% endblock %}

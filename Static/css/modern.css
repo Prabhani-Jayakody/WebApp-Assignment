@@ -1,0 +1,293 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    background-attachment: fixed;
+}
+
+/* Modern Navbar */
+.navbar {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+}
+
+.nav-link {
+    font-weight: 500;
+    color: #4a5568 !important;
+    transition: all 0.3s ease;
+    margin: 0 0.25rem;
+    border-radius: 8px;
+    padding: 0.5rem 1rem !important;
+}
+
+.nav-link:hover {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white !important;
+    transform: translateY(-2px);
+}
+
+/* Modern Cards */
+.card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    background: white;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+}
+
+/* Dashboard Stat Cards */
+.stat-card {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.stat-card:hover {
+    transform: translateY(-10px);
+}
+
+.stat-card.income {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+    color: white;
+}
+
+.stat-card.expense {
+    background: linear-gradient(135deg, #eb3349, #f45c43);
+    color: white;
+}
+
+.stat-card.balance {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    color: white;
+}
+
+.stat-card h3 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+}
+
+.stat-card p {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Modern Tables */
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background: #f8f9fa;
+    color: #4a5568;
+    font-weight: 600;
+    border: none;
+    padding: 1rem;
+}
+
+.table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.table tbody tr:hover {
+    background: #f8f9fa;
+    transform: scale(1.01);
+}
+
+/* Modern Buttons */
+.btn {
+    border-radius: 10px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #eb3349, #f45c43);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(235, 51, 73, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #f2994a, #f2c94c);
+    color: white;
+}
+
+/* Modern Forms */
+.form-control, .form-select {
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+}
+
+/* Badges */
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.bg-success {
+    background: linear-gradient(135deg, #11998e, #38ef7d) !important;
+}
+
+.bg-danger {
+    background: linear-gradient(135deg, #eb3349, #f45c43) !important;
+}
+
+.bg-info {
+    background: linear-gradient(135deg, #4facfe, #00f2fe) !important;
+}
+
+/* Progress Bar */
+.progress {
+    border-radius: 10px;
+    height: 25px;
+    background: #e2e8f0;
+}
+
+.progress-bar {
+    border-radius: 10px;
+    background: linear-gradient(90deg, #eb3349, #f45c43);
+    font-weight: 600;
+    line-height: 25px;
+}
+
+/* Container Background */
+.container {
+    background: transparent;
+}
+
+/* Main Content Area */
+.main-content {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 30px;
+    padding: 2rem;
+    margin: 1rem 0;
+    backdrop-filter: blur(10px);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card, .stat-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Footer */
+footer {
+    background: transparent;
+    color: white;
+    text-align: center;
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+footer p {
+    opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stat-card h3 {
+        font-size: 1.5rem;
+    }
+    
+    .card-header h4, .card-header h5 {
+        font-size: 1rem;
+    }
+    
+    .btn {
+        padding: 0.4rem 1rem;
+        font-size: 0.875rem;
+    }
+}

@@ -3,53 +3,208 @@
 {% block title %}All Transactions{% endblock %}
 
 {% block content %}
-<div class="card">
+<div class="card shadow">
     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-        <h4 class="mb-0">📋 All Transactions</h4>
-        <a href="{% url 'add_transaction' %}" class="btn btn-light btn-sm">+ Add New</a>
+        <h4 class="mb-0"><i class="bi bi-list-ul"></i> All Transactions</h4>
+        <a href="{% url 'add_transaction' %}" class="btn btn-light btn-sm">
+            <i class="bi bi-plus-circle"></i> Add New
+        </a>
     </div>
     <div class="card-body">
+        
+        <!-- Search and Filter Section -->
+        <div class="row mb-4">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-primary text-white">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by category or description...">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select id="typeFilter" class="form-select">
+                    <option value="all">📊 All Types</option>
+                    <option value="income">💰 Income Only</option>
+                    <option value="expense">💸 Expense Only</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="date" id="dateFilter" class="form-control" placeholder="Filter by date">
+            </div>
+            <div class="col-md-2">
+                <button id="clearFilters" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-x-circle"></i> Clear
+                </button>
+            </div>
+        </div>
+        
+        <!-- Filter Status -->
+        <div id="filterStatus" class="alert alert-info small mb-3" style="display: none;">
+            <i class="bi bi-funnel"></i> <span id="filterCount"></span> transaction(s) found
+        </div>
+        
+        <!-- Transactions Table -->
         <div class="table-responsive">
-            <table class="table table-striped table-hover">
+            <table class="table table-hover" id="transactionsTable">
                 <thead class="table-dark">
                     <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Category</th>
-                        <th>Description</th>
-                        <th>Amount</th>
-                        <th>Actions</th>
+                        <th><i class="bi bi-calendar"></i> Date</th>
+                        <th><i class="bi bi-tag"></i> Type</th>
+                        <th><i class="bi bi-folder"></i> Category</th>
+                        <th><i class="bi bi-card-text"></i> Description</th>
+                        <th><i class="bi bi-cash"></i> Amount</th>
+                        <th><i class="bi bi-gear"></i> Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for t in transactions %}
-                    <tr>
+                    <tr data-type="{{ t.type }}" data-category="{{ t.category|lower }}" data-description="{{ t.description|lower }}" data-date="{{ t.date|date:'Y-m-d' }}">
                         <td>{{ t.date }}</td>
                         <td>
-                            {% if t.type == 'income' %}  <!-- FIXED: Changed from transaction_type to type -->
-                                <span class="badge bg-success">Income</span>
+                            {% if t.type == 'income' %}
+                                <span class="badge bg-success">💰 Income</span>
                             {% else %}
-                                <span class="badge bg-danger">Expense</span>
+                                <span class="badge bg-danger">💸 Expense</span>
                             {% endif %}
                         </td>
                         <td>{{ t.category }}</td>
                         <td>{{ t.description|default:"-" }}</td>
                         <td class="{% if t.type == 'income' %}text-success{% else %}text-danger{% endif %} fw-bold">
-                            ${{ t.amount }}
+                            {% if t.type == 'income' %}+{% else %}-{% endif %} ${{ t.amount }}
                         </td>
                         <td>
-                            <a href="{% url 'edit_transaction' t.pk %}" class="btn btn-warning btn-sm">Edit</a>
-                            <a href="{% url 'delete_transaction' t.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                            <a href="{% url 'edit_transaction' t.pk %}" class="btn btn-warning btn-sm" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'delete_transaction' t.pk %}" class="btn btn-danger btn-sm" title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </a>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center">No transactions yet. <a href="{% url 'add_transaction' %}">Add one</a></td>
+                        <td colspan="6" class="text-center py-4">
+                            <i class="bi bi-inbox fs-1 text-muted"></i>
+                            <p class="mt-2">No transactions yet. <a href="{% url 'add_transaction' %}">Add your first transaction</a></p>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        
+        <!-- Export Button -->
+        <div class="text-center mt-3">
+            <button id="exportBtn" class="btn btn-outline-success btn-sm">
+                <i class="bi bi-download"></i> Export to CSV
+            </button>
+        </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const typeFilter = document.getElementById('typeFilter');
+        const dateFilter = document.getElementById('dateFilter');
+        const clearBtn = document.getElementById('clearFilters');
+        const filterStatus = document.getElementById('filterStatus');
+        const filterCountSpan = document.getElementById('filterCount');
+        const table = document.getElementById('transactionsTable');
+        const tbody = table.getElementsByTagName('tbody')[0];
+        
+        if (!tbody) return;
+        
+        const rows = Array.from(tbody.getElementsByTagName('tr'));
+        
+        function filterTable() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const typeValue = typeFilter.value;
+            const dateValue = dateFilter.value;
+            
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                // Skip empty rows (no transaction data)
+                if (row.cells.length < 6) return;
+                
+                const type = row.getAttribute('data-type') || '';
+                const category = row.getAttribute('data-category') || '';
+                const description = row.getAttribute('data-description') || '';
+                const rowDate = row.getAttribute('data-date') || '';
+                
+                const matchesSearch = searchTerm === '' || category.includes(searchTerm) || description.includes(searchTerm);
+                const matchesType = typeValue === 'all' || type === typeValue;
+                const matchesDate = dateValue === '' || rowDate === dateValue;
+                
+                if (matchesSearch && matchesType && matchesDate) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update filter status
+            if (searchTerm !== '' || typeValue !== 'all' || dateValue !== '') {
+                filterStatus.style.display = 'block';
+                filterCountSpan.textContent = visibleCount;
+            } else {
+                filterStatus.style.display = 'none';
+            }
+        }
+        
+        // Event listeners
+        searchInput.addEventListener('keyup', filterTable);
+        typeFilter.addEventListener('change', filterTable);
+        dateFilter.addEventListener('change', filterTable);
+        
+        // Clear all filters
+        clearBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            typeFilter.value = 'all';
+            dateFilter.value = '';
+            filterTable();
+        });
+        
+        // Export to CSV
+        document.getElementById('exportBtn')?.addEventListener('click', function() {
+            // Get only visible rows
+            const visibleRows = rows.filter(row => row.style.display !== 'none' && row.cells.length >= 6);
+            
+            if (visibleRows.length === 0) {
+                alert('No transactions to export!');
+                return;
+            }
+            
+            // Prepare CSV data
+            const headers = ['Date', 'Type', 'Category', 'Description', 'Amount'];
+            const csvData = [headers];
+            
+            visibleRows.forEach(row => {
+                const date = row.cells[0]?.textContent || '';
+                const type = row.cells[1]?.textContent?.trim() || '';
+                const category = row.cells[2]?.textContent || '';
+                const description = row.cells[3]?.textContent || '';
+                const amount = row.cells[4]?.textContent?.replace('$', '').trim() || '';
+                csvData.push([date, type, category, description, amount]);
+            });
+            
+            // Convert to CSV string
+            const csvContent = csvData.map(row => row.join(',')).join('\n');
+            
+            // Download file
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `transactions_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+    });
+</script>
 {% endblock %}

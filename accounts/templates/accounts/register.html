@@ -13,18 +13,34 @@
                 <form method="POST">
                     {% csrf_token %}
                     
-                    {% for field in form %}
-                    <div class="mb-3">
-                        <label class="form-label">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.help_text %}
-                            <small class="form-text text-muted">{{ field.help_text }}</small>
-                        {% endif %}
-                        {% if field.errors %}
-                            <div class="text-danger small">{{ field.errors }}</div>
+                    <!--Username-->
+                    <div class = "mb-3">
+                        <label class = "form-label">Username</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                        <div class = "text-danger small">{{ form.username.errors }}</div>
                         {% endif %}
                     </div>
-                    {% endfor %}
+
+                    <!--Password-->
+                    <div class = "mb-3">
+                        <label class = "form-label">Password</label>
+                        {{ form.password1 }}
+                        <small class = "text-muted d-block">
+                            Must be at least 8 characters.
+                        </small>
+                        {% if form.password1.errors %}
+                        <div class = "text-danger small">{{ form.password1.errors }} </div>
+                        {% endif %}
+                    </div>
+                    <!--Password confirmation-->
+                    <div class = "mb-3">
+                        <label class = "form-label">Confirm Password</label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                        <div class = "text-danger small">{{ form.password2.errors }}</div>
+                        {% endif %}
+                    </div>
                     
                     <button type="submit" class="btn btn-primary w-100">Register</button>
                 </form>

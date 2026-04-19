@@ -6,6 +6,7 @@ from django.db.models import Sum
 from django.db.models.functions import TruncMonth
 from .models import Transaction
 from .forms import TransactionForm
+import json
 
 @login_required
 def dashboard(request):
@@ -118,7 +119,6 @@ def reports(request):
     transaction_count = transactions.filter(type='expense').count()
     avg_expense = total_expenses / transaction_count if transaction_count > 0 else 0
     
-    import json
     context = {
         'total_income': total_income,
         'total_expenses': total_expenses,

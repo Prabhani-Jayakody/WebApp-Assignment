@@ -46,7 +46,6 @@
         transform: translateX(5px);
         background: rgba(102, 126, 234, 0.1);
     }
-    /* Percentage indicator pills */
     .percentage-pill {
         display: inline-block;
         background: rgba(0,0,0,0.7);
@@ -58,15 +57,18 @@
         margin-left: 8px;
     }
     .legend-with-percent {
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 5px 10px;
-        border-radius: 8px;
-        margin-bottom: 5px;
+        background: #f8f9fa;
+        border-radius: 25px;
+        padding: 5px 12px;
+        margin: 3px;
+        cursor: pointer;
+        transition: all 0.3s ease;
     }
     .legend-with-percent:hover {
-        background: #f0f0f0;
+        background: #e9ecef;
+        transform: scale(1.02);
     }
     .color-dot {
         width: 12px;
@@ -75,11 +77,102 @@
         display: inline-block;
         margin-right: 8px;
     }
+    
+    /* Loading Animation */
+    .loader-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        visibility: hidden;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+    .loader-overlay.active {
+        visibility: visible;
+        opacity: 1;
+    }
+    .loader-spinner {
+        width: 60px;
+        height: 60px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        background: white;
+        padding: 10px;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .loader-text {
+        color: white;
+        margin-top: 15px;
+        font-weight: bold;
+    }
+    
+    .date-range-card {
+        background: white;
+        border-radius: 15px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .apply-btn {
+        margin-top: 32px;
+    }
 </style>
+
+<!-- Loading Animation Overlay -->
+<div id="loaderOverlay" class="loader-overlay">
+    <div class="text-center">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Loading your reports...</div>
+    </div>
+</div>
 
 <h2 class="mb-4 text-white">📊 Spending Reports</h2>
 
-<!-- Summary Cards Row (Top) -->
+<!-- Date Range Filter Form -->
+<form method="GET" action="" id="filterForm">
+    <div class="date-range-card">
+        <div class="row align-items-end">
+            <div class="col-md-4">
+                <label class="form-label fw-bold">
+                    <i class="bi bi-calendar-start"></i> From Date
+                </label>
+                <input type="date" name="start_date" id="startDate" class="form-control" value="{{ request.GET.start_date }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">
+                    <i class="bi bi-calendar-end"></i> To Date
+                </label>
+                <input type="date" name="end_date" id="endDate" class="form-control" value="{{ request.GET.end_date }}">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary w-100 apply-btn" onclick="showLoader()">
+                    <i class="bi bi-funnel"></i> Apply Filter
+                </button>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-12">
+                <a href="{% url 'reports' %}" class="btn btn-link btn-sm" onclick="showLoader()">
+                    <i class="bi bi-x-circle"></i> Clear Date Filter
+                </a>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Summary Cards Row -->
 <div class="row mb-4">
     <div class="col-md-4">
         <div class="stat-card income text-center">
@@ -104,10 +197,10 @@
     </div>
 </div>
 
-<!-- Main Content: Left (Stats) + Right (Doughnut Chart) -->
+<!-- Main Content -->
 <div class="row mb-4">
     
-    <!-- LEFT SIDE: Monthly Summary + Quick Stats -->
+    <!-- LEFT SIDE -->
     <div class="col-md-6">
         <!-- Monthly Summary Card -->
         <div class="card shadow mb-4">
@@ -132,7 +225,7 @@
                         </table>
                     </div>
                 {% else %}
-                    <p class="text-center text-muted">No expense data available</p>
+                    <p class="text-center text-muted">No expense data available for selected period</p>
                 {% endif %}
             </div>
         </div>
@@ -170,7 +263,7 @@
                 <div class="text-center">
                     <p class="mb-1">
                         <strong>Average Expense:</strong> 
-                        ${{ total_expenses|default:0 }}
+                        ${{ avg_expense|default:0 }}
                     </p>
                     <p class="text-muted small">
                         Based on {{ transaction_count }} transaction(s)
@@ -188,7 +281,7 @@
         </div>
     </div>
     
-    <!-- RIGHT SIDE: Doughnut Chart with Percentage Legend -->
+    <!-- RIGHT SIDE: Doughnut Chart -->
     <div class="col-md-6">
         <div class="card shadow h-100">
             <div class="card-header bg-primary text-white">
@@ -199,11 +292,8 @@
                     <canvas id="expenseChart" width="450" height="450" style="max-width: 100%; height: auto; width: 100%;"></canvas>
                 </div>
                 
-                <!-- Percentage Legend - Shows percentages clearly -->
-                <div class="mt-3" id="percentageLegend">
-                    <div class="text-center mb-2">
-                        <small class="text-muted">Click on legend to toggle categories</small>
-                    </div>
+                <!-- Percentage Legend -->
+                <div class="mt-3 text-center">
                     <div id="legendContainer" class="d-flex flex-wrap justify-content-center gap-2">
                         <!-- Legend will be populated by JavaScript -->
                     </div>
@@ -229,61 +319,47 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <script>
+    // Show loader function
+    function showLoader() {
+        document.getElementById('loaderOverlay').classList.add('active');
+    }
+    
+    // Hide loader when page loads
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            document.getElementById('loaderOverlay').classList.remove('active');
+        }, 500);
+    });
+    
     document.addEventListener('DOMContentLoaded', function() {
-        const categoryNames = [];
-        const amounts = [];
-        
-        const categoryColors = {
-            'Food': '#11998e',
-            'Transport': '#f2994a', 
-            'Bills': '#eb3349',
-            'Shopping': '#4facfe',
-            'Entertainment': '#764ba2',
-            'Salary': '#38ef7d',
-            'Other': '#6c757d'
-        };
-        
-        const categoryIcons = {
-            'Food': '🍔',
-            'Transport': '🚗',
-            'Bills': '💡',
-            'Shopping': '🛍️',
-            'Entertainment': '🎬',
-            'Salary': '💰',
-            'Other': '📌'
-        };
-        
-        {% for item in expenses_by_category %}
-            {% if item.category == 1 or item.category == '1' %}
-                categoryNames.push('Food');
-            {% elif item.category == 2 or item.category == '2' %}
-                categoryNames.push('Transport');
-            {% elif item.category == 3 or item.category == '3' %}
-                categoryNames.push('Bills');
-            {% elif item.category == 4 or item.category == '4' %}
-                categoryNames.push('Shopping');
-            {% elif item.category == 5 or item.category == '5' %}
-                categoryNames.push('Entertainment');
-            {% elif item.category == 6 or item.category == '6' %}
-                categoryNames.push('Salary');
-            {% else %}
-                categoryNames.push('Other');
-            {% endif %}
-            amounts.push({{ item.total }});
-        {% endfor %}
-        
-        const totalExpenses = amounts.reduce((a, b) => a + b, 0);
+        // Data from Django template
+        const expensesData = {{ expenses_by_category_json|default:'[]' }};
+        const totalExpenses = {{ total_expenses|default:0 }};
         const totalIncome = {{ total_income|default:1 }};
         
-        // Prepare data
-        const labelsWithIcons = categoryNames.map(name => `${categoryIcons[name]} ${name}`);
-        const backgroundColors = categoryNames.map(name => categoryColors[name]);
+        if (expensesData.length === 0) {
+            document.getElementById('legendContainer').innerHTML = '<p class="text-muted">No expense data available</p>';
+            document.getElementById('insightsContainer').innerHTML = '<div class="alert alert-info mb-0 text-center">Add some expenses to see insights!</div>';
+            return;
+        }
         
-        // Calculate percentages
-        const percentages = amounts.map(amount => ((amount / totalExpenses) * 100).toFixed(1));
+        const categoryNames = expensesData.map(item => item.name);
+        const amounts = expensesData.map(item => item.total);
+        
+        const categoryColors = {
+            'Food': '#11998e', 'Transport': '#f2994a', 'Bills': '#eb3349',
+            'Shopping': '#4facfe', 'Entertainment': '#764ba2', 'Salary': '#38ef7d', 'Other': '#6c757d'
+        };
+        const categoryIcons = {
+            'Food': '🍔', 'Transport': '🚗', 'Bills': '💡', 'Shopping': '🛍️',
+            'Entertainment': '🎬', 'Salary': '💰', 'Other': '📌'
+        };
+        
+        const labelsWithIcons = categoryNames.map(name => `${categoryIcons[name] || '📌'} ${name}`);
+        const backgroundColors = categoryNames.map(name => categoryColors[name] || '#6c757d');
+        const percentages = amounts.map(amount => totalExpenses > 0 ? ((amount / totalExpenses) * 100).toFixed(1) : 0);
         
         const ctx = document.getElementById('expenseChart').getContext('2d');
-        
         const chart = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -305,71 +381,55 @@
                 cutout: '55%',
                 radius: '85%',
                 plugins: {
-                    legend: {
-                        display: false  // Hide default legend, we'll make our own with percentages
-                    },
+                    legend: { display: false },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
                                 const label = context.label || '';
                                 const value = context.raw || 0;
-                                const percentage = ((value / totalExpenses) * 100).toFixed(1);
+                                const percentage = totalExpenses > 0 ? ((value / totalExpenses) * 100).toFixed(1) : 0;
                                 return `${label}: $${value} (${percentage}%)`;
                             }
                         }
                     }
                 },
-                animation: {
-                    animateScale: true,
-                    animateRotate: true,
-                    duration: 1000,
-                    easing: 'easeInOutQuart'
-                }
+                animation: { animateScale: true, animateRotate: true, duration: 800 }
             }
         });
         
-        // Create custom legend with percentages
+        // Build legend
         const legendContainer = document.getElementById('legendContainer');
         let legendHtml = '';
-        
         categoryNames.forEach((name, index) => {
-            const color = categoryColors[name];
-            const icon = categoryIcons[name];
+            const color = categoryColors[name] || '#6c757d';
+            const icon = categoryIcons[name] || '📌';
             const amount = amounts[index];
             const percentage = percentages[index];
             legendHtml += `
-                <div class="legend-with-percent" style="cursor: pointer; display: inline-flex; align-items: center; background: #f8f9fa; border-radius: 25px; padding: 5px 12px; margin: 3px;" onclick="toggleSlice(${index})">
+                <div class="legend-with-percent" data-index="${index}">
                     <span class="color-dot" style="background-color: ${color};"></span>
                     <span style="font-weight: 500;">${icon} ${name}</span>
-                    <span class="percentage-pill" style="background: ${color}; margin-left: 8px;">${percentage}%</span>
+                    <span class="percentage-pill" style="background: ${color};">${percentage}%</span>
                     <span style="margin-left: 6px; font-size: 12px; color: #6c757d;">($${amount})</span>
                 </div>
             `;
         });
-        
         legendContainer.innerHTML = legendHtml;
         
-        // Function to toggle chart slices (click on legend)
-        window.toggleSlice = function(index) {
-            const meta = chart.getDatasetMeta(0);
-            meta.data[index].hidden = !meta.data[index].hidden;
-            chart.update();
-            
-            // Update legend styling
-            const legendItems = document.querySelectorAll('.legend-with-percent');
-            if (meta.data[index].hidden) {
-                legendItems[index].style.opacity = '0.5';
-                legendItems[index].style.textDecoration = 'line-through';
-            } else {
-                legendItems[index].style.opacity = '1';
-                legendItems[index].style.textDecoration = 'none';
-            }
-        };
+        // Toggle slices on legend click
+        document.querySelectorAll('.legend-with-percent').forEach((item, idx) => {
+            item.addEventListener('click', function() {
+                const meta = chart.getDatasetMeta(0);
+                meta.data[idx].hidden = !meta.data[idx].hidden;
+                chart.update();
+                this.style.opacity = meta.data[idx].hidden ? '0.5' : '1';
+                this.style.textDecoration = meta.data[idx].hidden ? 'line-through' : 'none';
+            });
+        });
         
-        // Create HTML overlay for center text
+        // Create center text overlay
         const canvas = document.getElementById('expenseChart');
         const parent = canvas.parentElement;
-        
         const centerDiv = document.createElement('div');
         centerDiv.style.position = 'absolute';
         centerDiv.style.top = '50%';
@@ -386,14 +446,8 @@
         centerDiv.innerHTML = `
             <div style="font-size: 22px; font-weight: bold; color: #eb3349;">$${totalExpenses}</div>
             <div style="font-size: 10px; color: #6c757d;">Total Expenses</div>
-            <div style="font-size: 10px; color: #28a745; margin-top: 4px;">
-                ${((totalExpenses / totalIncome) * 100).toFixed(1)}% of Income
-            </div>
         `;
-        
-        if (parent.style.position !== 'relative') {
-            parent.style.position = 'relative';
-        }
+        if (parent.style.position !== 'relative') parent.style.position = 'relative';
         parent.appendChild(centerDiv);
         
         // Generate insights
@@ -401,43 +455,23 @@
         const maxAmount = Math.max(...amounts);
         const maxIndex = amounts.indexOf(maxAmount);
         const topCategory = categoryNames[maxIndex];
-        const topPercentage = ((maxAmount / totalExpenses) * 100).toFixed(1);
+        const topPercentage = percentages[maxIndex];
         
         let insightsHtml = '';
         
         if (topPercentage > 40) {
-            insightsHtml += `
-                <div class="alert alert-warning mb-2 py-2">
-                    <i class="bi bi-exclamation-triangle"></i>
-                    <strong>${categoryIcons[topCategory]} ${topCategory}</strong> takes ${topPercentage}% of your expenses!
-                </div>
-            `;
+            insightsHtml += `<div class="alert alert-warning mb-2 py-2"><i class="bi bi-exclamation-triangle"></i> <strong>${categoryIcons[topCategory]} ${topCategory}</strong> takes ${topPercentage}% of your expenses! Consider reducing this category.</div>`;
         }
         
         if (totalExpenses > totalIncome) {
-            insightsHtml += `
-                <div class="alert alert-danger mb-2 py-2">
-                    <i class="bi bi-graph-down"></i>
-                    ⚠️ You're spending more than you earn! (${((totalExpenses / totalIncome) * 100).toFixed(0)}% of income)
-                </div>
-            `;
+            insightsHtml += `<div class="alert alert-danger mb-2 py-2"><i class="bi bi-graph-down"></i> ⚠️ You're spending more than you earn! (${((totalExpenses / totalIncome) * 100).toFixed(0)}% of income)</div>`;
         } else if (totalExpenses < totalIncome * 0.7) {
             const savingsRate = ((totalIncome - totalExpenses) / totalIncome * 100).toFixed(1);
-            insightsHtml += `
-                <div class="alert alert-success mb-2 py-2">
-                    <i class="bi bi-emoji-smile"></i>
-                    🎉 Great! You're saving ${savingsRate}% of your income!
-                </div>
-            `;
+            insightsHtml += `<div class="alert alert-success mb-2 py-2"><i class="bi bi-emoji-smile"></i> 🎉 Great! You're saving ${savingsRate}% of your income!</div>`;
         }
         
         if (insightsHtml === '') {
-            insightsHtml = `
-                <div class="alert alert-info mb-0 py-2 text-center">
-                    <i class="bi bi-lightbulb"></i>
-                    Your spending is well balanced across categories!
-                </div>
-            `;
+            insightsHtml = `<div class="alert alert-info mb-0 py-2 text-center"><i class="bi bi-lightbulb"></i> Your spending is well balanced across categories!</div>`;
         }
         
         insightsContainer.innerHTML = insightsHtml;

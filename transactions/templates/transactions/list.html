@@ -126,7 +126,6 @@
             let visibleCount = 0;
             
             rows.forEach(row => {
-                // Skip empty rows (no transaction data)
                 if (row.cells.length < 6) return;
                 
                 const type = row.getAttribute('data-type') || '';
@@ -146,7 +145,6 @@
                 }
             });
             
-            // Update filter status
             if (searchTerm !== '' || typeValue !== 'all' || dateValue !== '') {
                 filterStatus.style.display = 'block';
                 filterCountSpan.textContent = visibleCount;
@@ -155,12 +153,10 @@
             }
         }
         
-        // Event listeners
         searchInput.addEventListener('keyup', filterTable);
         typeFilter.addEventListener('change', filterTable);
         dateFilter.addEventListener('change', filterTable);
         
-        // Clear all filters
         clearBtn.addEventListener('click', function() {
             searchInput.value = '';
             typeFilter.value = 'all';
@@ -168,7 +164,7 @@
             filterTable();
         });
         
-        // Export to CSV
+        // Improved CSV Export Function
         document.getElementById('exportBtn')?.addEventListener('click', function() {
             // Get only visible rows
             const visibleRows = rows.filter(row => row.style.display !== 'none' && row.cells.length >= 6);
@@ -178,28 +174,61 @@
                 return;
             }
             
-            // Prepare CSV data
+            // Prepare CSV data with proper headers
             const headers = ['Date', 'Type', 'Category', 'Description', 'Amount'];
-            const csvData = [headers];
+            const csvRows = [];
             
+            // Add headers
+            csvRows.push(headers.join(','));
+            
+            // Add each transaction
             visibleRows.forEach(row => {
-                const date = row.cells[0]?.textContent || '';
-                const type = row.cells[1]?.textContent?.trim() || '';
-                const category = row.cells[2]?.textContent || '';
-                const description = row.cells[3]?.textContent || '';
-                const amount = row.cells[4]?.textContent?.replace('$', '').trim() || '';
-                csvData.push([date, type, category, description, amount]);
+                const date = row.cells[0]?.textContent?.trim() || '';
+                
+                // Get type (Income/Expense)
+                let type = '';
+                const typeCell = row.cells[1]?.textContent?.trim() || '';
+                if (typeCell.includes('Income')) {
+                    type = 'Income';
+                } else if (typeCell.includes('Expense')) {
+                    type = 'Expense';
+                } else {
+                    type = typeCell;
+                }
+                
+                const category = row.cells[2]?.textContent?.trim() || '';
+                const description = row.cells[3]?.textContent?.trim() || '';
+                
+                // Clean amount (remove $ and + - signs)
+                let amount = row.cells[4]?.textContent?.trim() || '';
+                amount = amount.replace('$', '').replace('+', '').replace('-', '').trim();
+                
+                // Add negative sign for expenses
+                if (type === 'Expense') {
+                    amount = '-' + amount;
+                }
+                
+                // Escape fields that might contain commas
+                const escapedDate = `"${date}"`;
+                const escapedCategory = `"${category}"`;
+                const escapedDescription = `"${description}"`;
+                
+                csvRows.push([escapedDate, type, escapedCategory, escapedDescription, amount].join(','));
             });
             
-            // Convert to CSV string
-            const csvContent = csvData.map(row => row.join(',')).join('\n');
+            // Create CSV content
+            const csvContent = csvRows.join('\n');
+            
+            // Add BOM for proper UTF-8 encoding (handles special characters)
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
             
             // Download file
-            const blob = new Blob([csvContent], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
+            const now = new Date();
+            const fileName = `transactions_${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')}.csv`;
             a.href = url;
-            a.download = `transactions_${new Date().toISOString().split('T')[0]}.csv`;
+            a.download = fileName;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

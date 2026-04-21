@@ -22,7 +22,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ("username","password1","password2")
+        fields = ("username","email","password1","password2")
 
     def clean_password1(self):
         password = self.cleaned_data.get("password1")
@@ -40,7 +40,7 @@ def register_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
             messages.success(request, 'Account created! Please log in.')
             return redirect('login')
     else:

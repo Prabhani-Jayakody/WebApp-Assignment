@@ -16,21 +16,21 @@
         <div class="stat-card income">
             <i class="bi bi-arrow-up-circle"></i>
             <p>Total Income</p>
-            <h3>${{ total_income|default:"0" }}</h3>
+            <h3>Rs. {{ total_income|default:"0" }}</h3>
         </div>
     </div>
     <div class="col-md-4">
         <div class="stat-card expense">
             <i class="bi bi-arrow-down-circle"></i>
             <p>Total Expenses</p>
-            <h3>${{ total_expenses|default:"0" }}</h3>
+            <h3>Rs. {{ total_expenses|default:"0" }}</h3>
         </div>
     </div>
     <div class="col-md-4">
         <div class="stat-card balance">
             <i class="bi bi-piggy-bank"></i>
             <p>Balance</p>
-            <h3>${{ balance|default:"0" }}</h3>
+            <h3>Rs. {{ balance|default:"0" }}</h3>
         </div>
     </div>
 </div>
@@ -58,7 +58,7 @@
                         <td>{{ t.category }}</td>
                         <td>{{ t.description|default:"-" }}</td>
                         <td class="{% if t.type == 'income' %}text-success{% else %}text-danger{% endif %} fw-bold">
-                            {% if t.type == 'income' %}+{% else %}-{% endif %} ${{ t.amount }}
+                            {% if t.type == 'income' %}+{% else %}-{% endif %} Rs. {{ t.amount }}
                         </td>
                         <td>
                             <a href="{% url 'edit_transaction' t.pk %}" class="btn btn-sm" title="Edit" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); color: white; border: none;">

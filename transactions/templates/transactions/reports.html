@@ -79,28 +79,46 @@
         border-radius: 50%;
     }
     
-    /* Category bar styles */
+    /* Category bar styles - ALL BARS SAME FIXED LENGTH with full text display */
+    .category-bars-wrapper {
+        width: 100%;
+        margin-top: 20px;
+    }
     .category-bar {
         display: flex;
         align-items: center;
-        margin-bottom: 15px;
-        flex-wrap: wrap !important;
-        gap: 12px !important;
+        margin-bottom: 16px;
+        gap: 12px;
+        width: 100%;
     }
+
     .category-label {
-        width: 110px;
+        width: auto;  
+        min-width: 130px;  
+        max-width: 160px;  
         font-weight: 600;
-        white-space: nowrap !important;
-        min-width: 140px;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+        margin-right: 15px; 
+    }
+
+    .category-label span {
+        overflow: visible;
+        white-space: nowrap;
     }
     .bar-container {
-        flex: 1;
-        height: 35px;
+        width: 200px;
+        height: 32px;
         background: #e9ecef;
-        border-radius: 18px;
+        border-radius: 16px;
         overflow: hidden;
-        min-width: 150px;
+        flex-shrink: 0;
+        margin-left: auto;  /* Push bars to the right */
     }
+    
     .bar-fill {
         height: 100%;
         display: flex;
@@ -109,30 +127,129 @@
         padding-right: 10px;
         color: white;
         font-weight: bold;
-        font-size: 13px;
-        border-radius: 18px;
+        font-size: 12px;
+        border-radius: 16px;
         transition: width 0.5s ease;
     }
     .category-percent {
         width: 60px;
         font-weight: bold;
         text-align: right;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    .category-amount {
+        width: 90px;
+        text-align: right;
+        white-space: nowrap;
+        font-weight: 500;
+        color: #2c3e50;
+        flex-shrink: 0;
     }
     .legend-color {
         width: 12px;
         height: 12px;
         border-radius: 50%;
         display: inline-block;
-        margin-right: 6px;
+        margin-right: 4px;
+        flex-shrink: 0;
     }
-    @media (max-width: 768px) {
+    
+    /* Responsive adjustments for mobile */
+    @media (max-width: 992px) {
         .category-label {
-            white-space: normal !important;
-            min-width: auto;
+            width: 120px;
+            font-size: 13px;
         }
         .bar-container {
-            min-width: 100% !important;
+            width: 180px;
         }
+    }
+    
+    @media (max-width: 768px) {
+        .category-label {
+            width: 115px;
+            font-size: 12px;
+        }
+        .bar-container {
+            width: 150px;
+            height: 28px;
+        }
+        .category-percent {
+            width: 50px;
+            font-size: 11px;
+        }
+        .category-amount {
+            width: 75px;
+            font-size: 11px;
+        }
+        .category-bar {
+            gap: 8px;
+        }
+        .bar-fill {
+            font-size: 10px;
+        }
+    }
+    
+    @media (max-width: 650px) {
+        .category-label {
+            width: 105px;
+            font-size: 11px;
+        }
+        .bar-container {
+            width: 130px;
+        }
+        .category-percent {
+            width: 45px;
+            font-size: 10px;
+        }
+        .category-amount {
+            width: 65px;
+            font-size: 10px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .category-label {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        .category-bar {
+            flex-wrap: wrap;
+        }
+        .bar-container {
+            width: calc(100% - 160px);
+            min-width: 150px;
+        }
+    }
+    
+    /* Legend styles for donut chart */
+    .donut-legend {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 20px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+    .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        white-space: nowrap;
+        background: white;
+        padding: 4px 10px;
+        border-radius: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .legend-color-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
     }
 </style>
 
@@ -256,7 +373,7 @@
         </div>
     </div>
     
-    <!-- RIGHT SIDE: CSS Doughnut Chart -->
+    <!-- RIGHT SIDE: CSS Doughnut Chart with Legend -->
     <div class="col-md-6">
         <div class="card shadow h-100">
             <div class="card-header bg-primary text-white">
@@ -268,13 +385,14 @@
                     <div id="donutContainer" class="text-center">
                         <!-- CSS Doughnut Chart will be built here -->
                     </div>
+                    <div id="donutLegend" class="donut-legend"></div>
                     {% endwith %}
                 {% else %}
                     <p class="text-center text-muted">No expense data available</p>
                 {% endif %}
                 
-                <!-- Category Bars -->
-                <div id="categoryBars" class="mt-4"></div>
+                <!-- Category Bars - Equal length wrapper -->
+                <div id="categoryBars" class="category-bars-wrapper"></div>
                 
                 <!-- Insights -->
                 <div class="insight-card mt-3" id="insightsContainer">
@@ -303,44 +421,60 @@
         if (expensesData.length === 0) {
             document.getElementById('categoryBars').innerHTML = '<p class="text-center text-muted">No expense data available</p>';
             document.getElementById('insightsContainer').innerHTML = '<div class="alert alert-info text-center">Add expenses to see insights</div>';
+            document.getElementById('donutLegend').innerHTML = '';
             return;
         }
         
+        // Color mapping for categories
         const colors = {
-            'Food': '#11998e', 'Transport': '#f2994a', 'Bills': '#eb3349',
-            'Shopping': '#4facfe', 'Health': '#ff6a88',  'Entertainment': '#764ba2', 'Rent': '#2f80ed', 'Salary': '#38ef7d', 'Other': '#6c757d'
+            'Food': '#11998e', 
+            'Transport': '#f2994a', 
+            'Bills': '#eb3349',
+            'Shopping': '#4facfe', 
+            'Health': '#ff6a88',  
+            'Entertainment': '#764ba2', 
+            'Rent': '#2f80ed', 
+            'Salary': '#38ef7d', 
+            'Other': '#6c757d'
         };
         
         const icons = {
-            'Food': '🍔', 'Transport': '🚗', 'Bills': '💡', 'Shopping': '🛍️', 'Health': '🏥',
-            'Entertainment': '🎬', 'Rent': '🏠', 'Salary': '💰', 'Other': '📌'
+            'Food': '🍔', 
+            'Transport': '🚗', 
+            'Bills': '💡', 
+            'Shopping': '🛍️', 
+            'Health': '🏥',
+            'Entertainment': '🎬', 
+            'Rent': '🏠', 
+            'Salary': '💰', 
+            'Other': '📌'
         };
         
-        // Build category bars
-        let barsHtml = '<h6 class="text-center mb-3">Expenses by Category</h6>';
-        let totalPercent = 0;
+        // Build category bars with FIXED WIDTH and FULL TEXT display
+        let barsHtml = '<h6 class="text-center mb-3">📊 Expenses by Category</h6>';
         
         expensesData.forEach(item => {
             const percent = (item.total / totalExpenses * 100).toFixed(1);
-            totalPercent += parseFloat(percent);
             const color = colors[item.name] || '#6c757d';
             const icon = icons[item.name] || '📌';
             
             barsHtml += `
-                <div class="category-bar" style="flex-wrap: wrap;">
-                    <div class="category-label" style="white-space: nowrap; min-width: 100px;">
+                <div class="category-bar">
+                    <div class="category-label" title="${item.name}">
                         <span class="legend-color" style="background-color: ${color};"></span>
-                        ${icon} ${item.name}
+                        ${icon} <span style="white-space: nowrap;">${item.name}</span>
                     </div>
-                    <div class="bar-container" style="flex: 1; min-width: 150px;">
+                    <div class="bar-container">
                         <div class="bar-fill" style="width: ${percent}%; background: linear-gradient(90deg, ${color}, ${color}dd);">
-                            ${percent > 15 ? percent + '%' : ''}
+                            ${percent > 12 ? percent + '%' : ''}
                         </div>
                     </div>
-                    <div class="category-percent" style="width: 60px; font-weight: bold; text-align: right; white-space: nowrap; color: ${color};">
+                    <div class="category-percent">
                         ${percent}%
                     </div>
-                    <div style="width: 60px; text-align: left; white-space: nowrap;">Rs. ${item.total}</div>
+                    <div class="category-amount">
+                        Rs. ${item.total}
+                    </div>
                 </div>
             `;
         });
@@ -350,6 +484,7 @@
         // Build CSS Doughnut Chart using conic-gradient
         let conicGradient = '';
         let startAngle = 0;
+        const segments = [];
         
         expensesData.forEach((item, index) => {
             const percent = (item.total / totalExpenses * 100);
@@ -357,6 +492,16 @@
             const color = colors[item.name] || '#6c757d';
             conicGradient += `${color} ${startAngle}deg ${startAngle + angle}deg`;
             if (index < expensesData.length - 1) conicGradient += ', ';
+            
+            // Store segment info for legend
+            segments.push({
+                name: item.name,
+                color: color,
+                icon: icons[item.name] || '📌',
+                percent: percent.toFixed(1),
+                amount: item.total
+            });
+            
             startAngle += angle;
         });
         
@@ -370,6 +515,19 @@
         `;
         
         document.getElementById('donutContainer').innerHTML = donutHtml;
+        
+        // Build legend for donut chart to show all category names clearly
+        let legendHtml = '';
+        segments.forEach(segment => {
+            legendHtml += `
+                <div class="legend-item">
+                    <span class="legend-color-dot" style="background-color: ${segment.color};"></span>
+                    <span>${segment.icon} ${segment.name}</span>
+                    <span style="font-weight: 600; color: ${segment.color};">${segment.percent}%</span>
+                </div>
+            `;
+        });
+        document.getElementById('donutLegend').innerHTML = legendHtml;
         
         // Generate insights
         const maxItem = expensesData.reduce((max, item) => item.total > max.total ? item : max, expensesData[0]);

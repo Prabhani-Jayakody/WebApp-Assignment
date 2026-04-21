@@ -84,11 +84,14 @@
         display: flex;
         align-items: center;
         margin-bottom: 15px;
-        gap: 10px;
+        flex-wrap: wrap !important;
+        gap: 12px !important;
     }
     .category-label {
-        width: 100px;
+        width: 110px;
         font-weight: 600;
+        white-space: nowrap !important;
+        min-width: 110px;
     }
     .bar-container {
         flex: 1;
@@ -121,6 +124,15 @@
         display: inline-block;
         margin-right: 6px;
     }
+    @media (max-width: 768px) {
+    .category-label {
+        white-space: normal !important;
+        min-width: auto;
+    }
+    .bar-container {
+        min-width: 100% !important;
+    }
+}
 </style>
 
 <h2 class="mb-4 text-white">📊 Spending Reports</h2>
@@ -314,18 +326,20 @@
             const icon = icons[item.name] || '📌';
             
             barsHtml += `
-                <div class="category-bar">
-                    <div class="category-label">
+                <div class="category-bar" style="flex-wrap: wrap;">
+                    <div class="category-label" style="white-space: nowrap; min-width: 100px;">
                         <span class="legend-color" style="background-color: ${color};"></span>
                         ${icon} ${item.name}
                     </div>
-                    <div class="bar-container">
+                    <div class="bar-container" style="flex: 1; min-width: 150px;">
                         <div class="bar-fill" style="width: ${percent}%; background: linear-gradient(90deg, ${color}, ${color}dd);">
                             ${percent > 15 ? percent + '%' : ''}
                         </div>
                     </div>
-                    <div class="category-percent" style="color: ${color};">${percent}%</div>
-                    <div style="width: 60px; text-align: left;">$${item.total}</div>
+                    <div class="category-percent" style="width: 60px; font-weight: bold; text-align: right; white-space: nowrap;">
+                        ${percent}%
+                    </div>
+                    <div style="width: 60px; text-align: left; white-space: nowrap;">$${item.total}</div>
                 </div>
             `;
         });

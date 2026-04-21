@@ -11,14 +11,350 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
-    <!-- Chart.js for beautiful charts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========================================
+           PREMIUM GREEN THEME - DIRECT STYLES
+           ======================================== */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(145deg, #064e3b 0%, #065f46 50%, #047857 100%);
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+        
+        /* Glass Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.96) !important;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 0.8rem 0;
+            border-bottom: 2px solid rgba(5, 150, 105, 0.3);
+        }
+        
+        .navbar-brand {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #059669, #10b981, #34d399);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent !important;
+        }
+        
+        .navbar-brand i {
+            color: #059669;
+            background: none;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            color: #374151 !important;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            padding: 0.5rem 1.2rem !important;
+        }
+        
+        .nav-link:hover {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white !important;
+            transform: translateY(-2px);
+        }
+        
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 24px;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            background: white;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+        }
+        
+        /* Stat Cards */
+        .stat-card {
+            border-radius: 28px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px);
+        }
+        
+        .stat-card.income {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        .stat-card.expense {
+            background: linear-gradient(135deg, #f43f5e, #e11d48, #be123c);
+            color: white;
+        }
+        
+        .stat-card.balance {
+            background: linear-gradient(135deg, #3b82f6, #2563eb, #1d4ed8);
+            color: white;
+        }
+        
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card p {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.9;
+            margin: 0;
+        }
+        
+        .stat-card h3 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0.5rem 0 0;
+        }
+        
+        /* Tables */
+        .table thead th {
+            background: linear-gradient(135deg, #064e3b, #059669);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 1rem;
+        }
+        
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        .table tbody tr:hover {
+            background: #ecfdf5;
+            transform: scale(1.01);
+        }
+        
+        /* Buttons */
+        .btn {
+            border-radius: 14px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #059669, #10b981);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid #059669;
+            color: #059669;
+            background: transparent;
+        }
+        
+        .btn-outline-primary:hover {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+        }
+        
+        /* Forms */
+        .form-control, .form-select {
+            border-radius: 14px;
+            border: 2px solid #e5e7eb;
+            padding: 0.7rem 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+            outline: none;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+        
+        .bg-success {
+            background: linear-gradient(135deg, #10b981, #059669) !important;
+        }
+        
+        .bg-danger {
+            background: linear-gradient(135deg, #f43f5e, #e11d48) !important;
+        }
+        
+        /* Progress Bar */
+        .progress {
+            border-radius: 30px;
+            height: 28px;
+            background: #e5e7eb;
+        }
+        
+        .progress-bar {
+            border-radius: 30px;
+            background: linear-gradient(90deg, #059669, #10b981);
+            font-weight: 600;
+            line-height: 28px;
+        }
+        
+        /* Alerts */
+        .alert {
+            border-radius: 16px;
+            border: none;
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #064e3b;
+            border-left: 4px solid #059669;
+        }
+        
+        .alert-warning {
+            background: linear-gradient(135deg, #fed7aa, #fde68a);
+            color: #92400e;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .alert-danger {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+        
+        /* Footer */
+        footer {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.85);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .card, .stat-card {
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        /* Container */
+        .container {
+            background: transparent;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stat-card h3 {
+                font-size: 1.5rem;
+            }
+            .stat-card p {
+                font-size: 0.7rem;
+            }
+            .btn {
+                padding: 0.4rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+                    
+            .category-label, 
+            .legend-item,
+            .d-flex.flex-wrap.justify-content-center.gap-2 .legend-item {
+                white-space: nowrap !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                flex-wrap: nowrap !important;
+            }
 
-    <!-- Custom CSS -->
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/modern.css' %}">
+            .legend-item span,
+            .legend-item .percentage-badge {
+                white-space: nowrap !important;
+            }
+
+            /* Make legend container responsive but keep items in one line */
+            #legendContainer .d-flex {
+                flex-wrap: wrap !important;
+            }
+
+            #legendContainer .legend-item {
+                flex-shrink: 0 !important;
+            }
+
+            /* For small screens, allow wrapping but keep each item in one line */
+            @media (max-width: 576px) {
+                .legend-item {
+                    font-size: 11px !important;
+                    padding: 4px 8px !important;
+                }
+                .percentage-badge {
+                    font-size: 9px !important;
+                    padding: 2px 6px !important;
+                }
+            }
+    </style>
 </head>
 <body>
+    <!-- Modern Navigation Bar -->
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
             <a class="navbar-brand" href="{% url 'dashboard' %}">
@@ -50,10 +386,19 @@
                                 <i class="bi bi-graph-up"></i> Reports
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/accounts/logout/">
-                                <i class="bi bi-box-arrow-right"></i> Logout ({{ user.username }})
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> {{ user.username }}
                             </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/accounts/profile/">
+                                    <i class="bi bi-person"></i> Profile
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/accounts/logout/">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                </a></li>
+                            </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
@@ -72,11 +417,12 @@
         </div>
     </nav>
 
-    <div class="container">
+    <!-- Main Content -->
+    <div class="container mt-4">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                    {{ message }}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm">
+                    <i class="bi bi-info-circle"></i> {{ message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             {% endfor %}
@@ -86,10 +432,17 @@
         {% endblock %}
     </div>
 
+    <!-- Modern Footer -->
     <footer>
-        <p><i class="bi bi-currency-dollar"></i> ExpenseTracker | Track your finances smartly © 2025</p>
+        <div class="container">
+            <p class="mb-0">
+                <i class="bi bi-currency-dollar"></i> ExpenseTracker | 
+                Track your finances smartly © 2025 | Group 12 Project
+            </p>
+        </div>
     </footer>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

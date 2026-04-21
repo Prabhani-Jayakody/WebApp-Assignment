@@ -13,21 +13,60 @@
                 <form method="POST">
                     {% csrf_token %}
                     
-                    {% for field in form %}
-                    <div class="mb-3">
-                        <label class="form-label">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.help_text %}
-                            <small class="form-text text-muted">{{ field.help_text }}</small>
-                        {% endif %}
-                        {% if field.errors %}
-                            <div class="text-danger small">{{ field.errors }}</div>
-                        {% endif %}
+                    <!--Username-->
+                    <div class = "mb-3">
+                        <label class = "form-label">Username</label>
+                        {{ form.username }}
+                        <div class="text-danger small mt-1">
+                            {{ form.username.errors }}
+                        </div>
                     </div>
-                    {% endfor %}
+
+                    <!-- Password-->
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+
+                        <div class="input-group">
+                            {{ form.password1 }}
+                            <span class="input-group-text"
+                                  onclick="togglePassword('{{ form.password1.id_for_label }}')"
+                                  style="cursor:pointer;">
+                                <i class="bi bi-eye"></i>
+                            </span>
+                        </div>
+
+                        <small class="text-muted">
+                            Password must be at least 8 characters with at least one number and one special character.
+                        </small>
+                         <div class="text-danger small mt-1">
+                            {{ form.password1.errors }}
+                        </div>
+                    </div>
                     
-                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                    <!-- Confirm Password -->
+                    <div class="mb-3">
+                        <label class="form-label">Confirm Password</label>
+
+                        <div class="input-group">
+                            {{ form.password2 }}
+                            <span class="input-group-text"
+                                  onclick="togglePassword('{{ form.password2.id_for_label }}')"
+                                  style="cursor:pointer;">
+                                <i class="bi bi-eye"></i>
+                            </span>
+                        </div>
+
+                        <div class="text-danger small mt-1">
+                            {{ form.password2.errors }}
+                        </div>
+                    </div>
+
+                    <!--Submit-->
+                    <button type="submit" class="btn btn-primary w-100">
+                        Register
+                    </button>
                 </form>
+
                 <p class="text-center mt-3">
                     Already have an account? <a href="{% url 'login' %}">Login here</a>
                 </p>
@@ -35,4 +74,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    function togglePassword(fieldId) {
+        let field = document.getElementById(fieldId);
+        let icon = field.nextElementSibling.querySelector("i");
+
+        if (field.type === "password") {
+            field.type = "text";
+            icon.classList.remove("bi-eye");
+            icon.classList.add("bi-eye-slash");
+        } else {
+            field.type = "password";
+            icon.classList.remove("bi-eye-slash");
+            icon.classList.add("bi-eye");
+        }
+    }
+</script>
+
 {% endblock %}

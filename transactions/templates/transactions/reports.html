@@ -155,21 +155,21 @@
         <div class="stat-card income text-center">
             <i class="bi bi-arrow-up-circle fs-1"></i>
             <p>💰 Total Income</p>
-            <h3>${{ total_income|default:"0" }}</h3>
+            <h3>Rs.{{ total_income|default:"0" }}</h3>
         </div>
     </div>
     <div class="col-md-4">
         <div class="stat-card expense text-center">
             <i class="bi bi-arrow-down-circle fs-1"></i>
             <p>💸 Total Expenses</p>
-            <h3>${{ total_expenses|default:"0" }}</h3>
+            <h3>Rs.{{ total_expenses|default:"0" }}</h3>
         </div>
     </div>
     <div class="col-md-4">
         <div class="stat-card balance text-center">
             <i class="bi bi-piggy-bank fs-1"></i>
             <p>⚖️ Balance</p>
-            <h3>${{ balance|default:"0" }}</h3>
+            <h3>Rs.{{ balance|default:"0" }}</h3>
         </div>
     </div>
 </div>
@@ -190,7 +190,7 @@
                                 {% for item in monthly_summary %}
                                 <tr>
                                     <td>{{ item.month|date:"F Y" }}</td>
-                                    <td class="text-danger fw-bold">${{ item.total }}</td>
+                                    <td class="text-danger fw-bold">Rs.{{ item.total }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -218,21 +218,21 @@
                     <div class="col-4">
                         <div class="stat-item border-end">
                             <i class="bi bi-cash-stack fs-2 text-success"></i>
-                            <h3 class="stat-number text-success mb-0">${{ total_income|default:"0" }}</h3>
+                            <h3 class="stat-number text-success mb-0">Rs.{{ total_income|default:"0" }}</h3>
                             <p class="text-muted small">Income</p>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="stat-item">
                             <i class="bi bi-credit-card fs-2 text-danger"></i>
-                            <h3 class="stat-number text-danger mb-0">${{ total_expenses|default:"0" }}</h3>
+                            <h3 class="stat-number text-danger mb-0">Rs.{{ total_expenses|default:"0" }}</h3>
                             <p class="text-muted small">Expenses</p>
                         </div>
                     </div>
                 </div>
                 <hr>
                 <div class="text-center">
-                    <p class="mb-1"><strong>Average Expense:</strong> ${{ avg_expense|default:"0" }}</p>
+                    <p class="mb-1"><strong>Average Expense:</strong> Rs.{{ avg_expense|default:"0" }}</p>
                     <p class="text-muted small">Based on {{ transaction_count|default:"0" }} transaction(s)</p>
                     <div class="progress mt-2" style="height: 8px;">
                         <div class="progress-bar bg-danger" style="width: {% widthratio total_expenses total_income 100 %}%"></div>
@@ -295,12 +295,12 @@
         
         const colors = {
             'Food': '#11998e', 'Transport': '#f2994a', 'Bills': '#eb3349',
-            'Shopping': '#4facfe', 'Entertainment': '#764ba2', 'Salary': '#38ef7d', 'Other': '#6c757d'
+            'Shopping': '#4facfe', 'Health': '#ff6a88',  'Entertainment': '#764ba2', 'Rent': '#2f80ed', 'Salary': '#38ef7d', 'Other': '#6c757d'
         };
         
         const icons = {
-            'Food': '🍔', 'Transport': '🚗', 'Bills': '💡', 'Shopping': '🛍️',
-            'Entertainment': '🎬', 'Salary': '💰', 'Other': '📌'
+            'Food': '🍔', 'Transport': '🚗', 'Bills': '💡', 'Shopping': '🛍️', 'Health': '🏥',
+            'Entertainment': '🎬', 'Rent': '🏠', 'Salary': '💰', 'Other': '📌'
         };
         
         // Build category bars
@@ -325,7 +325,7 @@
                         </div>
                     </div>
                     <div class="category-percent" style="color: ${color};">${percent}%</div>
-                    <div style="width: 60px; text-align: left;">$${item.total}</div>
+                    <div style="width: 60px; text-align: left;">Rs. ${item.total}</div>
                 </div>
             `;
         });
@@ -348,7 +348,7 @@
         const donutHtml = `
             <div class="donut-chart" style="background: conic-gradient(${conicGradient});">
                 <div class="donut-hole">
-                    <h3>$${totalExpenses}</h3>
+                    <h3>Rs. ${totalExpenses}</h3>
                     <p>Total Expenses</p>
                 </div>
             </div>

@@ -55,7 +55,7 @@ def login_view(request):
             user = form.get_user()
             login(request, user)
             messages.success(request, f'Welcome back, {user.username}!')
-            return redirect('profile')
+            return redirect('dashboard')
         else:
             messages.error(request, 'Invalid username or password.')
     else:
@@ -72,3 +72,10 @@ def logout_view(request):
 @login_required
 def profile_view(request):
     return render(request, 'accounts/profile.html')
+
+from django.http import HttpResponse
+
+def home(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    return render(request, 'home.html')

@@ -1,39 +1,471 @@
-{% extends 'base.html' %}
+{% extends 'side_bar.html' %}
+{% load static %}
 
-{% block title %}Add Transaction{% endblock %}
-
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">➕ Add New Transaction</h4>
+{% block dashboard_content %}
+<div class="row">
+    <!-- Left Column - Add Transaction Form -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="bi bi-plus-circle"></i> 
+                    {% if form.instance.pk %}Edit Transaction{% else %}Add New Transaction{% endif %}
+                </h4>
             </div>
-            <div class="card-body">
-                <form method="post">
+            <div class="card-body" style="padding: 2rem;">
+                <form method="post" id="transactionForm">
                     {% csrf_token %}
                     
-                    {% for field in form %}
+                    <!-- Transaction Type Toggle -->
+                    <div class="mb-4">
+                        <label class="form-label">Transaction Type</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="type" id="typeIncome" value="income" autocomplete="off" {% if form.type.value == 'income' %}checked{% endif %}>
+                            <label class="btn btn-outline-success" for="typeIncome" style="border-radius: 10px 0 0 10px; padding: 12px;">
+                                <i class="bi bi-arrow-up-circle"></i> Income
+                            </label>
+                            
+                            <input type="radio" class="btn-check" name="type" id="typeExpense" value="expense" autocomplete="off" {% if form.type.value == 'expense' or not form.type.value %}checked{% endif %}>
+                            <label class="btn btn-outline-danger" for="typeExpense" style="border-radius: 0 10px 10px 0; padding: 12px;">
+                                <i class="bi bi-arrow-down-circle"></i> Expense
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Amount Field -->
                     <div class="mb-3">
-                        <label class="form-label">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}
-                            <div class="text-danger small">{{ field.errors }}</div>
+                        <label class="form-label">Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text" style="background: #F3F4F6; border-right: none;">
+                                Rs.
+                            </span>
+                            {{ form.amount }}
+                        </div>
+                        <small class="text-muted">Enter a positive amount</small>
+                        {% if form.amount.errors %}
+                            <div class="text-danger small mt-1">{{ form.amount.errors }}</div>
                         {% endif %}
                     </div>
-                    {% endfor %}
                     
-                    <div class="d-flex gap-3 mt-3">
-                        <button type="submit" class="btn flex-fill" style="background: linear-gradient(135deg, #059669, #10b981); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 500;">
-                            <i class="bi bi-save"></i> Save Transaction
+                    <!-- Category Selection -->
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select name="category" class="form-control" required id="categorySelect">
+                            <option value="">Select a category</option>
+                            
+                            <!-- Income Categories -->
+                            <optgroup label="💰 Income Categories" class="income-cat">
+                                <option value="1" {% if form.category.value == 1 %}selected{% endif %}>💼 Salary / Wages</option>
+                                <option value="2" {% if form.category.value == 2 %}selected{% endif %}>💻 Freelance / Contract</option>
+                                <option value="3" {% if form.category.value == 3 %}selected{% endif %}>📈 Investment Returns</option>
+                                <option value="4" {% if form.category.value == 4 %}selected{% endif %}>🏢 Business Income</option>
+                                <option value="5" {% if form.category.value == 5 %}selected{% endif %}>🎁 Gift Received</option>
+                                <option value="6" {% if form.category.value == 6 %}selected{% endif %}>🔄 Refund / Return</option>
+                                <option value="9" {% if form.category.value == 9 %}selected{% endif %}>💵 Other Income</option>
+                            </optgroup>
+                            
+                            <!-- Expense Categories -->
+                            <optgroup label="📉 Expense Categories" class="expense-cat">
+                                <option value="1" {% if form.category.value == 1 %}selected{% endif %}>🍔 Food & Dining</option>
+                                <option value="2" {% if form.category.value == 2 %}selected{% endif %}>🚗 Transport / Fuel</option>
+                                <option value="3" {% if form.category.value == 3 %}selected{% endif %}>📄 Bills & Utilities</option>
+                                <option value="4" {% if form.category.value == 4 %}selected{% endif %}>🛍️ Shopping</option>
+                                <option value="5" {% if form.category.value == 5 %}selected{% endif %}>🎬 Entertainment</option>
+                                <option value="6" {% if form.category.value == 6 %}selected{% endif %}>💰 Salary (Expense)</option>
+                                <option value="7" {% if form.category.value == 7 %}selected{% endif %}>🏥 Health & Medical</option>
+                                <option value="8" {% if form.category.value == 8 %}selected{% endif %}>🏠 Rent / Mortgage</option>
+                                <option value="9" {% if form.category.value == 9 %}selected{% endif %}>📝 Other Expense</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    
+                    <!-- Payment Method -->
+                    <div class="mb-3">
+                        <label class="form-label">Payment Method</label>
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <input type="radio" class="btn-check" name="payment_method" id="paymentCash" value="Cash" autocomplete="off" checked>
+                                <label class="btn btn-outline-secondary w-100" for="paymentCash" style="border-radius: 10px; padding: 10px;">
+                                    <i class="bi bi-cash-stack"></i> Cash
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="radio" class="btn-check" name="payment_method" id="paymentCard" value="Card" autocomplete="off">
+                                <label class="btn btn-outline-secondary w-100" for="paymentCard" style="border-radius: 10px; padding: 10px;">
+                                    <i class="bi bi-credit-card"></i> Card
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="radio" class="btn-check" name="payment_method" id="paymentBank" value="Bank Transfer" autocomplete="off">
+                                <label class="btn btn-outline-secondary w-100" for="paymentBank" style="border-radius: 10px; padding: 10px;">
+                                    <i class="bi bi-bank"></i> Bank Transfer
+                                </label>
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <input type="radio" class="btn-check" name="payment_method" id="paymentDigital" value="Digital Wallet" autocomplete="off">
+                                <label class="btn btn-outline-secondary w-100" for="paymentDigital" style="border-radius: 10px; padding: 10px;">
+                                    <i class="bi bi-phone"></i> Digital Wallet
+                                </label>
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <input type="radio" class="btn-check" name="payment_method" id="paymentLoan" value="Loan/Credit" autocomplete="off">
+                                <label class="btn btn-outline-secondary w-100" for="paymentLoan" style="border-radius: 10px; padding: 10px;">
+                                    <i class="bi bi-bank2"></i> Loan / Credit
+                                </label>
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <input type="radio" class="btn-check" name="payment_method" id="paymentOther" value="Other" autocomplete="off">
+                                <label class="btn btn-outline-secondary w-100" for="paymentOther" style="border-radius: 10px; padding: 10px;">
+                                    <i class="bi bi-three-dots"></i> Other
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Date -->
+                    <div class="mb-3">
+                        <label class="form-label">Date</label>
+                        {{ form.date }}
+                    </div>
+                    
+                    <!-- Description -->
+                    <div class="mb-3">
+                        <label class="form-label">Description <span class="text-muted">(Optional)</span></label>
+                        {{ form.description }}
+                    </div>
+                    
+                    <!-- Loan/Credit Notes -->
+                    <div class="mb-3" id="loanNotes" style="display: none;">
+                        <label class="form-label">Loan/Credit Details</label>
+                        <textarea name="loan_notes" class="form-control" rows="2" placeholder="Enter lender name, interest rate, due date, EMI amount..."></textarea>
+                        <small class="text-muted">Add details about your loan or credit transaction for future reference</small>
+                    </div>
+                    
+                    <!-- Recurring Transaction -->
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="recurringCheck">
+                            <label class="form-check-label" for="recurringCheck">
+                                <i class="bi bi-arrow-repeat"></i> Recurring Transaction
+                            </label>
+                        </div>
+                        <select name="recurring_period" class="form-control mt-2" id="recurringPeriod" style="display: none;">
+                            <option value="">Select frequency</option>
+                            <option value="Daily">Daily (eg: Coffee, Transport)</option>
+                            <option value="Weekly">Weekly (eg: Groceries, Tuition)</option>
+                            <option value="Monthly">Monthly (eg: Rent, Bills, Salary, EMI)</option>
+                            <option value="Yearly">Yearly (eg: Insurance, Tax)</option>
+                        </select>
+                        <small class="text-muted">Set as recurring for regular bills.</small>
+                    </div>
+                    
+                    <!-- Submit Buttons -->
+                    <div class="d-flex gap-3 mt-4">
+                        <button type="submit" class="btn btn-primary flex-fill">
+                            <i class="bi bi-save"></i> 
+                            {% if form.instance.pk %}Update Transaction{% else %}Save Transaction{% endif %}
                         </button>
-                        <a href="{% url 'dashboard' %}" class="btn flex-fill" style="background: linear-gradient(135deg, #6b7280, #4b5563); color: white; border: none; padding: 10px 20px; border-radius: 10px; text-decoration: none; text-align: center; font-weight: 500;">
-                            <i class="bi bi-x-circle"></i> Cancel
+                        <a href="{% url 'dashboard' %}" class="btn btn-secondary flex-fill" style="background: #6B7280;">
+                            <i class="bi bi-arrow-left"></i> Cancel
                         </a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    
+    <!-- Right Sidebar Information -->
+    <div class="col-md-4">
+        <!-- Recent Activity Card -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Activity</h5>
+            </div>
+            <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                {% if recent_transactions %}
+                    {% for t in recent_transactions %}
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                        <div>
+                            <small class="text-muted">{{ t.date|date:"M d, Y" }}</small>
+                            <p class="mb-0 small fw-bold">{{ t.get_category_display|default:t.category }}</p>
+                            <small class="text-muted">{{ t.description|truncatechars:20|default:"No description" }}</small>
+                        </div>
+                        <div class="text-end">
+                            <span class="{% if t.type == 'income' %}text-success{% else %}text-danger{% endif %} fw-bold">
+                                {% if t.type == 'income' %}+{% else %}-{% endif %} Rs. {{ t.amount }}
+                            </span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center py-3">No recent transactions</p>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center py-3">Add your first transaction</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- This Month's Summary Card -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-calendar-month"></i> This Month's Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Total Income</span>
+                        <span class="text-success fw-bold">Rs. {{ monthly_income|default:"0"|floatformat:2 }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Total Expenses</span>
+                        <span class="text-danger fw-bold">Rs. {{ monthly_expenses|default:"0"|floatformat:2 }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between pt-2 border-top">
+                        <span class="fw-bold">Balance</span>
+                        <span class="fw-bold {% if monthly_balance >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            Rs. {{ monthly_balance|default:"0"|floatformat:2 }}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Progress Bar -->
+                {% if monthly_income > 0 %}
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Expense Ratio</span>
+                        <span>{{ expense_percentage|default:"0" }}%</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar {% if expense_percentage > 70 %}bg-danger{% elif expense_percentage > 50 %}bg-warning{% else %}bg-success{% endif %}" 
+                             style="width: {{ expense_percentage|default:"0" }}%;">
+                        </div>
+                    </div>
+                    {% if expense_percentage > 70 %}
+                    <small class="text-danger mt-1 d-block">⚠️ High spending! Consider reviewing your expenses.</small>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Save More Card -->
+        <div class="card mt-4" style="background: linear-gradient(135deg, #1B5E52, #238B75);">
+            <div class="card-body text-center">
+                <i class="bi bi-piggy-bank" style="font-size: 2rem; color: #F59E0B;"></i>
+                <h5 class="mt-2" style="color: white;">Save More</h5>
+                <p class="small" style="color: #D1D5DB;">
+                    Try to save at least 20% of your income.<br>
+                    Every small saving adds up!
+                </p>
+            </div>
+        </div>
+        
+        <!-- Smart Tips Card -->
+        <div class="card mt-4">
+            <div class="card-header" style="background: linear-gradient(135deg, #F59E0B, #D97706);">
+                <h5 class="mb-0"><i class="bi bi-lightbulb"></i> Smart Tips</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-start mb-3">
+                    <i class="bi bi-tag me-2" style="color: #F59E0B;"></i>
+                    <div>
+                        <small class="fw-bold">Use categories wisely</small><br>
+                        <small class="text-muted">Track where your money goes by using correct categories</small>
+                    </div>
+                </div>
+                
+                <div class="d-flex align-items-start mb-3">
+                    <i class="bi bi-pencil-square me-2" style="color: #F59E0B;"></i>
+                    <div>
+                        <small class="fw-bold">Add clear descriptions</small><br>
+                        <small class="text-muted">Helps you remember and search transactions later</small>
+                    </div>
+                </div>
+        
+                <div class="d-flex align-items-start mb-3">
+                    <i class="bi bi-pie-chart me-2" style="color: #F59E0B;"></i>
+                    <div>
+                        <small class="fw-bold">Review monthly reports</small><br>
+                        <small class="text-muted">See spending patterns and adjust your budget</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    // Transaction type styling and category filtering
+    document.querySelectorAll('input[name="type"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const categorySelect = document.getElementById('categorySelect');
+            const options = categorySelect.options;
+            
+            if (this.value === 'income') {
+                for (let i = 0; i < options.length; i++) {
+                    const optgroup = options[i].parentElement;
+                    if (optgroup && optgroup.label === '📉 Expense Categories') {
+                        for (let j = 0; j < optgroup.children.length; j++) {
+                            optgroup.children[j].style.display = 'none';
+                        }
+                    } else if (optgroup && optgroup.label === '💰 Income Categories') {
+                        for (let j = 0; j < optgroup.children.length; j++) {
+                            optgroup.children[j].style.display = '';
+                        }
+                    }
+                }
+                categorySelect.value = '';
+            } else {
+                for (let i = 0; i < options.length; i++) {
+                    const optgroup = options[i].parentElement;
+                    if (optgroup && optgroup.label === '💰 Income Categories') {
+                        for (let j = 0; j < optgroup.children.length; j++) {
+                            optgroup.children[j].style.display = 'none';
+                        }
+                    } else if (optgroup && optgroup.label === '📉 Expense Categories') {
+                        for (let j = 0; j < optgroup.children.length; j++) {
+                            optgroup.children[j].style.display = '';
+                        }
+                    }
+                }
+                categorySelect.value = '';
+            }
+        });
+    });
+    
+    // Trigger initial filter
+    const selectedType = document.querySelector('input[name="type"]:checked');
+    if (selectedType) {
+        selectedType.dispatchEvent(new Event('change'));
+    }
+    
+    // Payment method styling and loan notes
+    document.querySelectorAll('[id^="payment"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const label = document.querySelector(`label[for="${this.id}"]`);
+            
+            document.querySelectorAll('[id^="payment"]').forEach(r => {
+                const lbl = document.querySelector(`label[for="${r.id}"]`);
+                if (lbl) {
+                    lbl.style.background = 'transparent';
+                    lbl.style.color = '#6B7280';
+                    lbl.style.borderColor = '#E5E7EB';
+                }
+            });
+            
+            if (label) {
+                label.style.background = '#059669';
+                label.style.color = 'white';
+                label.style.borderColor = '#059669';
+            }
+            
+            const loanNotes = document.getElementById('loanNotes');
+            if (this.value === 'Loan/Credit') {
+                loanNotes.style.display = 'block';
+            } else {
+                loanNotes.style.display = 'none';
+            }
+        });
+    });
+    
+    // Recurring transaction toggle
+    const recurringCheck = document.getElementById('recurringCheck');
+    const recurringPeriod = document.getElementById('recurringPeriod');
+    
+    if (recurringCheck) {
+        recurringCheck.addEventListener('change', function() {
+            recurringPeriod.style.display = this.checked ? 'block' : 'none';
+            if (!this.checked) {
+                recurringPeriod.value = '';
+            }
+        });
+    }
+    
+    // Amount validation
+    const amountInput = document.querySelector('input[name="amount"]');
+    if (amountInput) {
+        amountInput.addEventListener('input', function() {
+            const value = parseFloat(this.value);
+            if (isNaN(value) || value < 0) {
+                this.style.borderColor = '#EF4444';
+                this.setCustomValidity('Amount cannot be negative');
+            } else {
+                this.style.borderColor = '#E5E7EB';
+                this.setCustomValidity('');
+            }
+        });
+        
+        amountInput.addEventListener('keypress', function(e) {
+            if (e.key === '-') {
+                e.preventDefault();
+            }
+        });
+    }
+</script>
+
+<style>
+    .btn-check:checked + .btn-outline-success {
+        background: #34D399;
+        color: white;
+        border-color: #34D399;
+    }
+    
+    .btn-check:checked + .btn-outline-danger {
+        background: #F87171;
+        color: white;
+        border-color: #F87171;
+    }
+    
+    .btn-outline-success, .btn-outline-danger {
+        transition: all 0.3s;
+    }
+    
+    .btn-outline-success:hover, .btn-outline-danger:hover {
+        transform: translateY(-2px);
+    }
+    
+    .input-group-text {
+        background-color: #F3F4F6;
+        border-right: none;
+    }
+    
+    input[name="amount"]:focus {
+        border-left: none;
+        box-shadow: none;
+    }
+    
+    .form-check-input:checked {
+        background-color: #059669;
+        border-color: #059669;
+    }
+    
+    select.form-control, input.form-control, textarea.form-control {
+        border-radius: 10px;
+    }
+    
+    select.form-control:focus, input.form-control:focus, textarea.form-control:focus {
+        border-color: #059669;
+        box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+    }
+    
+    .progress {
+        background-color: #E5E7EB;
+        border-radius: 10px;
+    }
+    
+    .progress-bar {
+        border-radius: 10px;
+        transition: width 0.5s ease;
+    }
+    
+    /* Make right sidebar cards equal height and scroll if needed */
+    .col-md-4 {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .col-md-4 .card {
+        flex-shrink: 0;
+    }
+</style>
 {% endblock %}

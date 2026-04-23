@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.db import models
 from django.http import JsonResponse
 from django.db.models import Sum
@@ -7,6 +8,7 @@ from django.db.models.functions import TruncMonth
 from .models import Transaction
 from .forms import TransactionForm
 import json
+from datetime import datetime
 
 
 # ---------------------------
@@ -69,7 +71,7 @@ def dashboard(request):
 
 
 # ---------------------------
-# ADD TRANSACTION
+# ADD TRANSACTION (UPDATED WITH CONTEXT DATA)
 # ---------------------------
 @login_required
 def add_transaction(request):
@@ -79,10 +81,52 @@ def add_transaction(request):
             t = form.save(commit=False)
             t.user = request.user
             t.save()
+            messages.success(request, 'Transaction added successfully!')
             return redirect('transaction_list')
+        else:
+            messages.error(request, 'Please correct the errors below.')
     else:
         form = TransactionForm()
-    return render(request, 'transactions/add_transaction.html', {'form': form})
+    
+    # Get recent transactions for sidebar
+    recent_transactions = Transaction.objects.filter(user=request.user).order_by('-date')[:5]
+    
+    # Get monthly totals
+    current_month = datetime.now().month
+    current_year = datetime.now().year
+    
+    monthly_income = Transaction.objects.filter(
+        user=request.user,
+        type='income',
+        date__month=current_month,
+        date__year=current_year
+    ).aggregate(Sum('amount'))['amount__sum'] or 0
+    
+    monthly_expenses = Transaction.objects.filter(
+        user=request.user,
+        type='expense',
+        date__month=current_month,
+        date__year=current_year
+    ).aggregate(Sum('amount'))['amount__sum'] or 0
+    
+    monthly_balance = monthly_income - monthly_expenses
+    
+    # Calculate expense percentage
+    expense_percentage = round((monthly_expenses / monthly_income * 100) if monthly_income > 0 else 0, 1)
+    
+    # Check for high expenses warning (超过70%)
+    high_expense_warning = expense_percentage > 70
+    
+    context = {
+        'form': form,
+        'recent_transactions': recent_transactions,
+        'monthly_income': monthly_income,
+        'monthly_expenses': monthly_expenses,
+        'monthly_balance': monthly_balance,
+        'expense_percentage': expense_percentage,
+        'high_expense_warning': high_expense_warning,
+    }
+    return render(request, 'transactions/add_transaction.html', context)
 
 
 # ---------------------------
@@ -103,6 +147,7 @@ def edit_transaction(request, pk):
     form = TransactionForm(request.POST or None, instance=t)
     if form.is_valid():
         form.save()
+        messages.success(request, 'Transaction updated successfully!')
         return redirect('transaction_list')
     return render(request, 'transactions/add_transaction.html', {'form': form})
 
@@ -115,6 +160,7 @@ def delete_transaction(request, pk):
     t = get_object_or_404(Transaction, pk=pk, user=request.user)
     if request.method == 'POST':
         t.delete()
+        messages.success(request, 'Transaction deleted successfully!')
         return redirect('transaction_list')
     return render(request, 'transactions/confirm_delete.html', {'transaction': t})
 

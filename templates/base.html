@@ -11,13 +11,35 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <style>
-        /* ========================================
-           PREMIUM GREEN THEME - DIRECT STYLES
-           ======================================== */
+        /* ========== DARK GREEN PROFESSIONAL THEME ========== */
+        :root {
+            --green-deepest: #051E1A;
+            --green-darker: #0A2F2A;
+            --green-dark: #0D3B35;
+            --green-medium-dark: #114B43;
+            --green-medium: #1B5E52;
+            --green-forest: #1B6B5E;
+            --green-emerald: #238B75;
+            --green-light: #2EA88E;
+            --green-bright: #34D399;
+            --green-glow: #6EE7B7;
+            --gold: #F59E0B;
+            --gold-dark: #D97706;
+            --red: #EF4444;
+            --text-white: #FFFFFF;
+            --text-light: #F0FDF4;
+            --text-gray: #D1D5DB;
+            --text-muted: #9CA3AF;
+            --bg-darker: #061412;
+            --bg-dark: #0A1C18;
+        }
         
         * {
             margin: 0;
@@ -26,263 +48,591 @@
         }
         
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(145deg, #064e3b 0%, #065f46 50%, #047857 100%);
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 50%, var(--green-deepest) 100%);
+            color: var(--text-light);
             min-height: 100vh;
-            background-attachment: fixed;
         }
         
-        /* Glass Navbar */
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--green-darker);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--green-medium), var(--green-emerald));
+            border-radius: 10px;
+        }
+        
+        /* Navbar */
         .navbar {
-            background: rgba(255, 255, 255, 0.96) !important;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            background: linear-gradient(135deg, var(--green-deepest) 0%, var(--green-dark) 50%, var(--green-medium) 100%);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
             padding: 0.8rem 0;
-            border-bottom: 2px solid rgba(5, 150, 105, 0.3);
+            border-bottom: 1px solid rgba(52, 211, 153, 0.3);
         }
         
         .navbar-brand {
             font-size: 1.6rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #059669, #10b981, #34d399);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent !important;
+            color: white !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
         
-        .navbar-brand i {
-            color: #059669;
-            background: none;
+        /* Navbar Register Button - STAYS YELLOW */
+        .nav-register-btn {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
+            color: white !important;
+            border-radius: 12px;
+            padding: 8px 20px !important;
+            margin-left: 8px;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            height: 44px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .nav-register-btn:hover {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+            color: white !important;
+        }
+        
+        /* Navbar Login Button - STAYS GLASS */
+        .nav-login-btn {
+            background: rgba(255, 255, 255, 0.15) !important;
+            backdrop-filter: blur(10px);
+            color: white !important;
+            border: 2px solid rgba(255, 255, 255, 0.5) !important;
+            border-radius: 12px;
+            padding: 8px 20px !important;
+            margin-left: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            height: 44px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .nav-login-btn:hover {
+            background: rgba(255, 255, 255, 0.15) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+            color: white !important;
+            border: 2px solid rgba(255, 255, 255, 0.5) !important;
+        }
+        
+        /* Prevent nav-link hover from overriding button colors */
+        .nav-link.nav-register-btn:hover,
+        .nav-link.nav-login-btn:hover {
+            background: none !important;
         }
         
         .nav-link {
+            color: var(--text-light) !important;
             font-weight: 500;
-            color: #374151 !important;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             border-radius: 12px;
-            padding: 0.5rem 1.2rem !important;
+            padding: 8px 18px !important;
         }
         
-        .nav-link:hover {
-            background: linear-gradient(135deg, #059669, #10b981);
-            color: white !important;
+        .nav-link:not(.nav-register-btn):not(.nav-login-btn):hover {
+            background: rgba(52, 211, 153, 0.15);
             transform: translateY(-2px);
+        }
+        
+        .nav-link i {
+            margin-right: 8px;
+        }
+        
+        /* ========== HERO SQUARE ========== */
+        .hero-section-wrapper {
+            padding: 1rem 0 2rem;
+        }
+        
+        .hero-hover-card {
+            background: linear-gradient(135deg, #0D3B35 0%, #1B5E52 50%, #114B43 100%);
+            border-radius: 25px;
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .hero-hover-card:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero-slogan {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #A7F3D0;
+            margin-bottom: 1rem;
+            opacity: 0.95;
+        }
+        
+        .hero-slogan::before {
+            content: '"';
+            font-size: 1.5rem;
+            color: #6EE7B7;
+            margin-right: 5px;
+        }
+        
+        .hero-slogan::after {
+            content: '"';
+            font-size: 1.5rem;
+            color: #6EE7B7;
+            margin-left: 5px;
+        }
+        
+        .hero-description {
+            font-size: 1rem;
+            color: #D1D5DB;
+            max-width: 600px;
+            margin: 1rem auto;
+            line-height: 1.6;
+        }
+        
+        .hero-buttons {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-register {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn-register:hover {
+            background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+            color: white;
+        }
+        
+        .btn-login {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .btn-login:hover {
+            background: white;
+            color: #1B5E52;
+            transform: translateY(-2px);
+            border-color: white;
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            color: white;
+            font-weight: 600;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            color: white;
+            border: none;
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+        
+        .btn {
+            border-radius: 12px;
+            padding: 12px 28px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        /* ========== FEATURE CARDS ========== */
+        .feature-wrapper {
+            background: linear-gradient(135deg, #F5FFF5 0%, #EBFFEB 100%);
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(100, 150, 100, 0.2);
+        }
+        
+        .feature-wrapper:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(135deg, #FFFFFF 0%, #F5FFF5 100%);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #1B5E52 0%, #114B43 100%);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .feature-wrapper:hover .feature-icon {
+            transform: scale(1.05);
+        }
+        
+        .feature-icon i {
+            font-size: 2.5rem;
+            color: #C1E1C1;
+        }
+        
+        .feature-wrapper h5 {
+            color: #1B5E52;
+            font-weight: 700;
+            margin-top: 0.5rem;
+        }
+        
+        .feature-wrapper p {
+            color: #4A6B4A;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        /* Stat Cards */
+        .stat-card {
+            background: linear-gradient(135deg, #F5FFF5 0%, #EBFFEB 100%);
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(100, 150, 100, 0.2);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #FFFFFF 0%, #F5FFF5 100%);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--green-emerald), var(--green-bright));
+        }
+        
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-card h6 {
+            color: #1B5E52;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card h4 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1B5E52;
+            margin: 10px 0;
         }
         
         /* Cards */
         .card {
             border: none;
-            border-radius: 24px;
-            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            background: white;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #FFFFFF 0%, #F8F9FA 100%);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: all 0.4s;
             overflow: hidden;
         }
         
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
         }
         
         .card-header {
-            background: linear-gradient(135deg, #059669, #10b981);
-            color: white;
+            background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-medium) 100%);
+            color: var(--text-white);
+            border: none;
+            padding: 1.2rem 1.8rem;
+            font-weight: 700;
+        }
+        
+        /* Form Labels */
+        .form-label {
+            color: #1B5E52;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .form-control {
+            border-radius: 12px;
+            border: 2px solid #E5E7EB;
+            padding: 12px 16px;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .form-control:focus {
+            border-color: var(--green-emerald);
+            box-shadow: 0 0 0 0.25rem rgba(35, 139, 117, 0.25);
+        }
+        
+        /* Auth Links */
+        .auth-links {
+            text-align: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .auth-links p {
+            margin-bottom: 0.5rem;
+            color: #4A6B4A;
+        }
+        
+        .auth-links a {
+            color: #F59E0B;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        .auth-links a:hover {
+            color: #D97706;
+            text-decoration: underline;
+        }
+        
+        .alert {
+            border-radius: 15px;
             border: none;
             padding: 1rem 1.5rem;
-            font-weight: 600;
-        }
-        
-        /* Stat Cards */
-        .stat-card {
-            border-radius: 28px;
-            padding: 1.5rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.2);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-8px);
-        }
-        
-        .stat-card.income {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
-            color: white;
-        }
-        
-        .stat-card.expense {
-            background: linear-gradient(135deg, #f43f5e, #e11d48, #be123c);
-            color: white;
-        }
-        
-        .stat-card.balance {
-            background: linear-gradient(135deg, #3b82f6, #2563eb, #1d4ed8);
-            color: white;
-        }
-        
-        .stat-card i {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        
-        .stat-card p {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.9;
-            margin: 0;
-        }
-        
-        .stat-card h3 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin: 0.5rem 0 0;
-        }
-        
-        /* Tables */
-        .table thead th {
-            background: linear-gradient(135deg, #064e3b, #059669);
-            color: white;
-            font-weight: 600;
-            border: none;
-            padding: 1rem;
-        }
-        
-        .table tbody tr {
-            transition: all 0.3s ease;
-        }
-        
-        .table tbody tr:hover {
-            background: #ecfdf5;
-            transform: scale(1.01);
-        }
-        
-        /* Buttons */
-        .btn {
-            border-radius: 14px;
-            padding: 0.6rem 1.5rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #059669, #10b981);
-            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4);
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-        
-        .btn-danger:hover {
-            transform: translateY(-2px);
-        }
-        
-        .btn-warning {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-        }
-        
-        .btn-outline-primary {
-            border: 2px solid #059669;
-            color: #059669;
-            background: transparent;
-        }
-        
-        .btn-outline-primary:hover {
-            background: linear-gradient(135deg, #059669, #10b981);
-            color: white;
-        }
-        
-        /* Forms */
-        .form-control, .form-select {
-            border-radius: 14px;
-            border: 2px solid #e5e7eb;
-            padding: 0.7rem 1.2rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: #059669;
-            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
-            outline: none;
-        }
-        
-        .form-label {
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 0.5rem;
-        }
-        
-        /* Badges */
-        .badge {
-            padding: 0.4rem 1rem;
-            border-radius: 30px;
-            font-weight: 600;
-        }
-        
-        .bg-success {
-            background: linear-gradient(135deg, #10b981, #059669) !important;
-        }
-        
-        .bg-danger {
-            background: linear-gradient(135deg, #f43f5e, #e11d48) !important;
-        }
-        
-        /* Progress Bar */
-        .progress {
-            border-radius: 30px;
-            height: 28px;
-            background: #e5e7eb;
-        }
-        
-        .progress-bar {
-            border-radius: 30px;
-            background: linear-gradient(90deg, #059669, #10b981);
-            font-weight: 600;
-            line-height: 28px;
-        }
-        
-        /* Alerts */
-        .alert {
-            border-radius: 16px;
-            border: none;
+            margin-bottom: 1.5rem;
         }
         
         .alert-success {
-            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-            color: #064e3b;
-            border-left: 4px solid #059669;
+            background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+            color: var(--green-deepest);
+            border-left: 4px solid var(--green-emerald);
         }
         
-        .alert-warning {
-            background: linear-gradient(135deg, #fed7aa, #fde68a);
-            color: #92400e;
-            border-left: 4px solid #f59e0b;
+        .alert-error {
+            background: linear-gradient(135deg, #FEE2E2, #FECACA);
+            color: #991B1B;
+            border-left: 4px solid var(--red);
         }
         
-        .alert-danger {
-            background: linear-gradient(135deg, #fee2e2, #fecaca);
-            color: #991b1b;
-            border-left: 4px solid #ef4444;
+        .alert-info {
+            background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
+            color: #1E3A8A;
+            border-left: 4px solid #3B82F6;
         }
         
         /* Footer */
         footer {
-            background: transparent;
-            color: rgba(255, 255, 255, 0.85);
-            text-align: center;
-            padding: 2rem;
-            margin-top: 2rem;
+            background: linear-gradient(135deg, var(--green-deepest) 0%, var(--green-dark) 50%, var(--green-medium) 100%);
+            color: var(--text-light);
+            padding: 3rem 0 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(52, 211, 153, 0.2);
         }
         
-        /* Animations */
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h4 {
+            color: var(--green-bright);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .footer-section p, .footer-section a {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            text-decoration: none;
+            transition: color 0.3s;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-section a:hover {
+            color: var(--green-bright);
+            transform: translateX(5px);
+            transition: all 0.3s;
+        }
+        
+        .footer-section i {
+            margin-right: 8px;
+            color: var(--green-bright);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-links a {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .social-links a:hover {
+            background: var(--green-bright);
+            transform: translateY(-3px);
+        }
+        
+        .social-links a:hover i {
+            color: var(--green-deepest);
+        }
+        
+        .social-links i {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer-bottom p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin: 0;
+        }
+        
+        hr {
+            background: linear-gradient(90deg, transparent, var(--green-emerald), var(--green-bright), transparent);
+            height: 2px;
+            border: none;
+            opacity: 0.3;
+            margin: 2rem 0;
+        }
+        
+        .text-primary {
+            color: var(--green-emerald) !important;
+        }
+        
+        .text-success {
+            color: var(--green-bright) !important;
+        }
+        
+        .text-danger {
+            color: var(--red) !important;
+        }
+        
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+        
+        .text-light {
+            color: var(--text-light) !important;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            .hero-slogan {
+                font-size: 1rem;
+            }
+            .hero-description {
+                font-size: 0.9rem;
+            }
+            .hero-hover-card {
+                padding: 2rem 1rem;
+            }
+            .stat-card h4 {
+                font-size: 1.5rem;
+            }
+            .btn {
+                padding: 8px 20px;
+                font-size: 0.9rem;
+            }
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            .nav-register-btn, .nav-login-btn {
+                margin: 5px 0;
+                text-align: center;
+                justify-content: center;
+            }
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .social-links {
+                justify-content: center;
+            }
+        }
+        
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -294,71 +644,17 @@
             }
         }
         
-        .card, .stat-card {
-            animation: fadeInUp 0.5s ease-out;
-        }
-        
-        /* Container */
-        .container {
-            background: transparent;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .stat-card h3 {
-                font-size: 1.5rem;
-            }
-            .stat-card p {
-                font-size: 0.7rem;
-            }
-            .btn {
-                padding: 0.4rem 1rem;
-                font-size: 0.8rem;
-            }
-        }
-                    
-        .category-label, 
-        .legend-item,
-        .d-flex.flex-wrap.justify-content-center.gap-2 .legend-item {
-            white-space: nowrap !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            flex-wrap: nowrap !important;
-        }
-
-        .legend-item span,
-        .legend-item .percentage-badge {
-            white-space: nowrap !important;
-        }
-
-        /* Make legend container responsive but keep items in one line */
-        #legendContainer .d-flex {
-            flex-wrap: wrap !important;
-        }
-
-        #legendContainer .legend-item {
-            flex-shrink: 0 !important;
-        }
-
-        /* For small screens, allow wrapping but keep each item in one line */
-        @media (max-width: 576px) {
-            .legend-item {
-                font-size: 11px !important;
-                padding: 4px 8px !important;
-            }
-            .percentage-badge {
-                font-size: 9px !important;
-                padding: 2px 6px !important;
-            }
+        .hero-hover-card, .card, .stat-card, .feature-wrapper {
+            animation: fadeInUp 0.6s ease-out;
         }
     </style>
 </head>
 <body>
-    <!-- Modern Navigation Bar -->
+    <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'dashboard' %}">
-                <i class="bi bi-wallet2"></i> ExpenseTracker
+            <a class="navbar-brand" href="{% url 'home' %}">
+                💰 ExpenseWise
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -366,6 +662,12 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
+                        <!-- Logged in user - Show all navigation items -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'home' %}">
+                                <i class="bi bi-house-door"></i> Home
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'dashboard' %}">
                                 <i class="bi bi-speedometer2"></i> Dashboard
@@ -386,31 +688,30 @@
                                 <i class="bi bi-graph-up"></i> Reports
                             </a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                <i class="bi bi-person-circle"></i> {{ user.username }}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">
+                                <i class="bi bi-box-arrow-right"></i> Logout
                             </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/accounts/profile/">
-                                    <i class="bi bi-person"></i> Profile
-                                </a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="/accounts/logout/">
-                                    <i class="bi bi-box-arrow-right"></i> Logout
-                                </a></li>
-                            </ul>
                         </li>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="/accounts/login/">
-                                <i class="bi bi-box-arrow-in-right"></i> Login
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/accounts/register/">
-                                <i class="bi bi-person-plus"></i> Register
-                            </a>
-                        </li>
+                        <!-- Not logged in - Check if on login or register page -->
+                        {% with request.resolver_match.url_name as url_name %}
+                            {% if url_name != 'login' and url_name != 'register' %}
+                                <!-- Home page - Show Register/Login buttons -->
+                                <li class="nav-item">
+                                    <a class="nav-link nav-register-btn" href="{% url 'register' %}">
+                                        <i class="bi bi-person-plus"></i> Register
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-login-btn" href="{% url 'login' %}">
+                                        <i class="bi bi-box-arrow-in-right"></i> Login
+                                    </a>
+                                </li>
+                            {% else %}
+                                <!-- On Login or Register page - No buttons, just empty -->
+                            {% endif %}
+                        {% endwith %}
                     {% endif %}
                 </ul>
             </div>
@@ -421,8 +722,8 @@
     <div class="container mt-4">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm">
-                    <i class="bi bi-info-circle"></i> {{ message }}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i> {{ message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             {% endfor %}
@@ -432,17 +733,70 @@
         {% endblock %}
     </div>
 
-    <!-- Modern Footer -->
+    <!-- Footer -->
     <footer>
         <div class="container">
-            <p class="mb-0">
-                <i class="bi bi-currency-dollar"></i> ExpenseTracker | 
-                Track your finances smartly © 2025 | Group 12 Project
-            </p>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4><i class="bi bi-wallet2"></i> ExpenseWise</h4>
+                    <p>Smart financial management for a better tomorrow. Track your expenses, manage budgets, and achieve your financial goals.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4><i class="bi bi-link"></i> Quick Links</h4>
+                    <a href="{% url 'home' %}"><i class="bi bi-house-door"></i> Home</a>
+                    <a href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    <a href="{% url 'add_transaction' %}"><i class="bi bi-plus-circle"></i> Add Transaction</a>
+                    <a href="{% url 'reports' %}"><i class="bi bi-graph-up"></i> Reports</a>
+                    <a href="{% url 'register' %}"><i class="bi bi-person-plus"></i> Register</a>
+                    <a href="{% url 'login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h4><i class="bi bi-envelope"></i> Contact Us</h4>
+                    <p><i class="bi bi-envelope"></i> support@expensewise.com</p>
+                    <p><i class="bi bi-telephone"></i> +94 11 234 5678</p>
+                    <p><i class="bi bi-geo-alt"></i> Colombo, Sri Lanka</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4><i class="bi bi-share"></i> Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-linkedin"></i></a>
+                        <a href="#"><i class="bi bi-github"></i></a>
+                    </div>
+                    <p style="margin-top: 1rem;"><i class="bi bi-clock"></i> Mon-Fri: 9:00 AM - 6:00 PM</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>💰 ExpenseWise | Stay wise with your money © 2026 | All Rights Reserved</p>
+                <p style="margin-top: 0.5rem;">
+                    <a href="#" style="color: #9CA3AF; text-decoration: none;">Privacy Policy</a> | 
+                    <a href="#" style="color: #9CA3AF; text-decoration: none;">Terms of Service</a> | 
+                    <a href="#" style="color: #9CA3AF; text-decoration: none;">FAQ</a>
+                </p>
+            </div>
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

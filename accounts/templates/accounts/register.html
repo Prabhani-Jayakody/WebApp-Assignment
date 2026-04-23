@@ -1,84 +1,84 @@
 {% extends 'base.html' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Register | ExpenseWise{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-5">
+    <div class="col-md-6">
         <div class="card shadow">
-            <div class="card-header bg-primary text-white text-center">
-                <h4 class="mb-0"><i class="bi bi-person-plus"></i> Create Account</h4>
+            <div class="card-header text-center">
+                <h4 class="mb-0"><i class="bi bi-person-plus"></i> Create an Account</h4>
             </div>
             <div class="card-body p-4">
                 <form method="POST">
                     {% csrf_token %}
                     
-                    <!--Username-->
-                    <div class = "mb-3">
-                        <label class = "form-label">Username</label>
+                    <!-- Username -->
+                    <div class="mb-3">
+                        <label class="form-label"><i class="bi bi-person"></i> Username</label>
                         {{ form.username }}
-                        <div class="text-danger small mt-1">
-                            {{ form.username.errors }}
-                        </div>
+                        {% if form.username.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.username.errors }}
+                            </div>
+                        {% endif %}
                     </div>
 
                     <!-- Email -->
                     <div class="mb-3">
-                         <label class="form-label">Email</label>
+                        <label class="form-label"><i class="bi bi-envelope"></i> Email</label>
                         {{ form.email }}
-                    <div class="text-danger small mt-1">
-                        {{ form.email.errors }}
+                        {% if form.email.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.email.errors }}
+                            </div>
+                        {% endif %}
                     </div>
-                </div>
 
-                    <!-- Password-->
+                    <!-- Password -->
                     <div class="mb-3">
-                        <label class="form-label">Password</label>
-
+                        <label class="form-label"><i class="bi bi-lock"></i> Password</label>
                         <div class="input-group">
                             {{ form.password1 }}
-                            <span class="input-group-text"
-                                  onclick="togglePassword('{{ form.password1.id_for_label }}')"
-                                  style="cursor:pointer;">
+                            <span class="input-group-text" onclick="togglePassword('{{ form.password1.id_for_label }}')" style="cursor:pointer;">
                                 <i class="bi bi-eye"></i>
                             </span>
                         </div>
-
                         <small class="text-muted">
-                            Password must be at least 8 characters with at least one number and one special character.
+                            <i class="bi bi-info-circle"></i> Password must be at least 8 characters with at least one number and one special character.
                         </small>
-                         <div class="text-danger small mt-1">
-                            {{ form.password1.errors }}
-                        </div>
+                        {% if form.password1.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.password1.errors }}
+                            </div>
+                        {% endif %}
                     </div>
                     
                     <!-- Confirm Password -->
                     <div class="mb-3">
-                        <label class="form-label">Confirm Password</label>
-
+                        <label class="form-label"><i class="bi bi-lock-fill"></i> Confirm Password</label>
                         <div class="input-group">
                             {{ form.password2 }}
-                            <span class="input-group-text"
-                                  onclick="togglePassword('{{ form.password2.id_for_label }}')"
-                                  style="cursor:pointer;">
+                            <span class="input-group-text" onclick="togglePassword('{{ form.password2.id_for_label }}')" style="cursor:pointer;">
                                 <i class="bi bi-eye"></i>
                             </span>
                         </div>
-
-                        <div class="text-danger small mt-1">
-                            {{ form.password2.errors }}
-                        </div>
+                        {% if form.password2.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.password2.errors }}
+                            </div>
+                        {% endif %}
                     </div>
 
-                    <!--Submit-->
+                    <!-- Submit -->
                     <button type="submit" class="btn btn-primary w-100">
-                        Register
+                        <i class="bi bi-person-plus"></i> Register
                     </button>
                 </form>
-
-                <p class="text-center mt-3">
-                    Already have an account? <a href="{% url 'login' %}">Login here</a>
-                </p>
+                
+                <div class="auth-links">
+                    <p><i class="bi bi-box-arrow-in-right"></i> Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+                </div>
             </div>
         </div>
     </div>
@@ -87,8 +87,9 @@
 <script>
     function togglePassword(fieldId) {
         let field = document.getElementById(fieldId);
-        let icon = field.nextElementSibling.querySelector("i");
-
+        // Find the icon in the same input-group
+        let icon = field.parentElement.querySelector(".input-group-text i");
+        
         if (field.type === "password") {
             field.type = "text";
             icon.classList.remove("bi-eye");

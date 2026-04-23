@@ -12,6 +12,7 @@
             </div>
             <div class="card-body p-4">
                 <form method="POST">
+                    {% csrf_token %}
                     {% if form.errors %}
                         <div class="alert alert-danger rounded-3 mb-3">
                             ❌ Invalid username or password. Please try again.

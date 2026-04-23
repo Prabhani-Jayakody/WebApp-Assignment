@@ -1,239 +1,197 @@
-{% extends 'base.html' %}
+{% extends 'side_bar.html' %}
+{% load humanize %}
 
-{% block title %}All Transactions{% endblock %}
+{% block dashboard_content %}
 
-{% block content %}
 <div class="card shadow">
-    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+
+    <!-- HEADER -->
+    <div class="card-header d-flex justify-content-between align-items-center">
         <h4 class="mb-0"><i class="bi bi-list-ul"></i> All Transactions</h4>
-        <a href="{% url 'add_transaction' %}" class="btn btn-light btn-sm">
+        <a href="{% url 'add_transaction' %}" class="btn btn-primary btn-sm">
             <i class="bi bi-plus-circle"></i> Add New
         </a>
     </div>
+
     <div class="card-body">
-        
-        <!-- Search and Filter Section -->
+
+        <!-- SEARCH + FILTER -->
         <div class="row mb-4">
             <div class="col-md-5">
                 <div class="input-group">
-                    <span class="input-group-text bg-primary text-white">
+                    <span class="input-group-text" style="background: linear-gradient(135deg, #059669, #10b981); color: white;">
                         <i class="bi bi-search"></i>
                     </span>
-                    <input type="text" id="searchInput" class="form-control" placeholder="Search by category or description...">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search...">
                 </div>
             </div>
+
             <div class="col-md-3">
                 <select id="typeFilter" class="form-select">
-                    <option value="all">📊 All Types</option>
-                    <option value="income">💰 Income Only</option>
-                    <option value="expense">💸 Expense Only</option>
+                    <option value="all">All Types</option>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
                 </select>
             </div>
+
             <div class="col-md-2">
-                <input type="date" id="dateFilter" class="form-control" placeholder="Filter by date">
+                <input type="date" id="dateFilter" class="form-control">
             </div>
+
             <div class="col-md-2">
-                <button id="clearFilters" class="btn btn-outline-secondary w-100">
-                    <i class="bi bi-x-circle"></i> Clear
-                </button>
+                <button id="clearFilters" class="btn btn-outline-secondary w-100">Clear</button>
             </div>
         </div>
-        
-        <!-- Filter Status -->
-        <div id="filterStatus" class="alert alert-info small mb-3" style="display: none;">
-            <i class="bi bi-funnel"></i> <span id="filterCount"></span> transaction(s) found
+
+        <!-- SUMMARY -->
+        <div class="row mb-3">
+            <div class="col-md-4 text-success">
+                Total Income: <strong id="filteredIncome">Rs. 0</strong>
+            </div>
+            <div class="col-md-4 text-danger">
+                Total Expenses: <strong id="filteredExpense">Rs. 0</strong>
+            </div>
+            <div class="col-md-4 fw-bold" id="filteredBalance">
+                Balance: Rs. 0
+            </div>
         </div>
-        
-        <!-- Transactions Table -->
+
+        <!-- TABLE -->
         <div class="table-responsive">
             <table class="table table-hover" id="transactionsTable">
-                <thead class="table-dark">
+
+                <thead style="background:#0D3B35; color:white;">
                     <tr>
-                        <th><i class="bi bi-calendar"></i> Date</th>
-                        <th><i class="bi bi-tag"></i> Type</th>
-                        <th><i class="bi bi-folder"></i> Category</th>
-                        <th><i class="bi bi-card-text"></i> Description</th>
-                        <th><i class="bi bi-cash"></i> Amount</th>
-                        <th><i class="bi bi-gear"></i> Actions</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     {% for t in transactions %}
-                    <tr data-type="{{ t.type }}" data-category="{{ t.category|lower }}" data-description="{{ t.description|lower }}" data-date="{{ t.date|date:'Y-m-d' }}">
-                        <td>{{ t.date }}</td>
+                    <tr 
+                        data-type="{{ t.type }}"
+                        data-category="{{ t.category|lower }}"
+                        data-description="{{ t.description|lower }}"
+                        data-date="{{ t.date|date:'Y-m-d' }}"
+                        data-amount="{{ t.amount }}"
+                    >
+
+                        <td>{{ t.date|date:"M d, Y" }}</td>
+
                         <td>
                             {% if t.type == 'income' %}
-                                <span class="badge" style="background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #78350f;">💰 Income</span>
+                                <span class="badge bg-success">Income</span>
                             {% else %}
-                                <span class="badge bg-danger">💸 Expense</span>
+                                <span class="badge bg-danger">Expense</span>
                             {% endif %}
                         </td>
+
                         <td>{{ t.category }}</td>
                         <td>{{ t.description|default:"-" }}</td>
+
                         <td class="{% if t.type == 'income' %}text-success{% else %}text-danger{% endif %} fw-bold">
-                            {% if t.type == 'income' %}+{% else %}-{% endif %} Rs.{{ t.amount }}
+                            {% if t.type == 'income' %}+{% else %}-{% endif %} Rs. {{ t.amount|intcomma }}
                         </td>
+
                         <td>
-                            <a href="{% url 'edit_transaction' t.pk %}" class="btn btn-sm" title="Edit" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); color: white; border: none;">
-                                <i class="bi bi-pencil"></i> Edit
+                            <a href="{% url 'edit_transaction' t.pk %}" class="btn btn-warning btn-sm">
+                                <i class="bi bi-pencil"></i>
                             </a>
-                            <a href="{% url 'delete_transaction' t.pk %}" class="btn btn-danger btn-sm" title="Delete">
+
+                            <a href="{% url 'delete_transaction' t.pk %}" class="btn btn-danger btn-sm">
                                 <i class="bi bi-trash"></i>
                             </a>
                         </td>
+
                     </tr>
                     {% empty %}
                     <tr>
                         <td colspan="6" class="text-center py-4">
-                            <i class="bi bi-inbox fs-1 text-muted"></i>
-                            <p class="mt-2">No transactions yet. <a href="{% url 'add_transaction' %}">Add your first transaction</a></p>
+                            No transactions yet.
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
+
             </table>
         </div>
-        
-        <!-- Export Button -->
+
+        <!-- EXPORT -->
         <div class="text-center mt-3">
             <button id="exportBtn" class="btn btn-outline-success btn-sm">
-                <i class="bi bi-download"></i> Export to CSV
+                Export CSV
             </button>
         </div>
+
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('searchInput');
-        const typeFilter = document.getElementById('typeFilter');
-        const dateFilter = document.getElementById('dateFilter');
-        const clearBtn = document.getElementById('clearFilters');
-        const filterStatus = document.getElementById('filterStatus');
-        const filterCountSpan = document.getElementById('filterCount');
-        const table = document.getElementById('transactionsTable');
-        const tbody = table.getElementsByTagName('tbody')[0];
-        
-        if (!tbody) return;
-        
-        const rows = Array.from(tbody.getElementsByTagName('tr'));
-        
-        function filterTable() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const typeValue = typeFilter.value;
-            const dateValue = dateFilter.value;
-            
-            let visibleCount = 0;
-            
-            rows.forEach(row => {
-                if (row.cells.length < 6) return;
-                
-                const type = row.getAttribute('data-type') || '';
-                const category = row.getAttribute('data-category') || '';
-                const description = row.getAttribute('data-description') || '';
-                const rowDate = row.getAttribute('data-date') || '';
-                
-                const matchesSearch = searchTerm === '' || category.includes(searchTerm) || description.includes(searchTerm);
-                const matchesType = typeValue === 'all' || type === typeValue;
-                const matchesDate = dateValue === '' || rowDate === dateValue;
-                
-                if (matchesSearch && matchesType && matchesDate) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-            
-            if (searchTerm !== '' || typeValue !== 'all' || dateValue !== '') {
-                filterStatus.style.display = 'block';
-                filterCountSpan.textContent = visibleCount;
-            } else {
-                filterStatus.style.display = 'none';
-            }
-        }
-        
-        searchInput.addEventListener('keyup', filterTable);
-        typeFilter.addEventListener('change', filterTable);
-        dateFilter.addEventListener('change', filterTable);
-        
-        clearBtn.addEventListener('click', function() {
-            searchInput.value = '';
-            typeFilter.value = 'all';
-            dateFilter.value = '';
-            filterTable();
+document.addEventListener('DOMContentLoaded', function () {
+
+    const rows = Array.from(document.querySelectorAll('#transactionsTable tbody tr'));
+
+    const searchInput = document.getElementById('searchInput');
+    const typeFilter = document.getElementById('typeFilter');
+    const dateFilter = document.getElementById('dateFilter');
+
+    const incomeEl = document.getElementById('filteredIncome');
+    const expenseEl = document.getElementById('filteredExpense');
+    const balanceEl = document.getElementById('filteredBalance');
+
+    function update(rowsVisible) {
+        let income = 0, expense = 0;
+
+        rowsVisible.forEach(r => {
+            const type = r.dataset.type;
+            const amt = parseFloat(r.dataset.amount);
+
+            if (type === 'income') income += amt;
+            else expense += amt;
         });
-        
-        // Improved CSV Export Function
-        document.getElementById('exportBtn')?.addEventListener('click', function() {
-            // Get only visible rows
-            const visibleRows = rows.filter(row => row.style.display !== 'none' && row.cells.length >= 6);
-            
-            if (visibleRows.length === 0) {
-                alert('No transactions to export!');
-                return;
-            }
-            
-            // Prepare CSV data with proper headers
-            const headers = ['Date', 'Type', 'Category', 'Description', 'Amount'];
-            const csvRows = [];
-            
-            // Add headers
-            csvRows.push(headers.join(','));
-            
-            // Add each transaction
-            visibleRows.forEach(row => {
-                const date = row.cells[0]?.textContent?.trim() || '';
-                
-                // Get type (Income/Expense)
-                let type = '';
-                const typeCell = row.cells[1]?.textContent?.trim() || '';
-                if (typeCell.includes('Income')) {
-                    type = 'Income';
-                } else if (typeCell.includes('Expense')) {
-                    type = 'Expense';
-                } else {
-                    type = typeCell;
-                }
-                
-                const category = row.cells[2]?.textContent?.trim() || '';
-                const description = row.cells[3]?.textContent?.trim() || '';
-                
-                // Clean amount (remove $ and + - signs)
-                let amount = row.cells[4]?.textContent?.trim() || '';
-                amount = amount.replace('$', '').replace('+', '').replace('-', '').trim();
-                
-                // Add negative sign for expenses
-                if (type === 'Expense') {
-                    amount = '-' + amount;
-                }
-                
-                // Escape fields that might contain commas
-                const escapedDate = `"${date}"`;
-                const escapedCategory = `"${category}"`;
-                const escapedDescription = `"${description}"`;
-                
-                csvRows.push([escapedDate, type, escapedCategory, escapedDescription, amount].join(','));
-            });
-            
-            // Create CSV content
-            const csvContent = csvRows.join('\n');
-            
-            // Add BOM for proper UTF-8 encoding (handles special characters)
-            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-            
-            // Download file
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            const now = new Date();
-            const fileName = `transactions_${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')}.csv`;
-            a.href = url;
-            a.download = fileName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+
+        incomeEl.textContent = 'Rs. ' + income.toLocaleString();
+        expenseEl.textContent = 'Rs. ' + expense.toLocaleString();
+
+        const bal = income - expense;
+        balanceEl.innerHTML = bal >= 0
+            ? `<span class="text-success">Balance: Rs. ${bal.toLocaleString()}</span>`
+            : `<span class="text-danger">Balance: Rs. ${bal.toLocaleString()}</span>`;
+    }
+
+    function filter() {
+        const s = searchInput.value.toLowerCase();
+        const t = typeFilter.value;
+        const d = dateFilter.value;
+
+        let visible = [];
+
+        rows.forEach(r => {
+            const match =
+                (s === '' || r.dataset.category.includes(s) || r.dataset.description.includes(s)) &&
+                (t === 'all' || r.dataset.type === t) &&
+                (d === '' || r.dataset.date === d);
+
+            r.style.display = match ? '' : 'none';
+
+            if (match) visible.push(r);
         });
-    });
+
+        update(visible);
+    }
+
+    searchInput.addEventListener('keyup', filter);
+    typeFilter.addEventListener('change', filter);
+    dateFilter.addEventListener('change', filter);
+
+    update(rows);
+
+});
 </script>
+
 {% endblock %}

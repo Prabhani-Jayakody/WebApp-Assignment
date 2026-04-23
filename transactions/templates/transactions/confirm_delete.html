@@ -1,33 +1,50 @@
-{% extends 'base.html' %}
+{% extends 'side_bar.html' %}
 
-{% block title %}Delete Transaction{% endblock %}
-
-{% block content %}
+{% block dashboard_content %}
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card shadow">
-            <div class="card-header bg-danger text-white">
-                <h4 class="mb-0">⚠️ Confirm Delete</h4>
+            <div class="card-header" style="background: linear-gradient(135deg, #DC2626, #EF4444); color: white;">
+                <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Confirm Delete</h4>
             </div>
             <div class="card-body text-center">
-                <p class="fs-5">Are you sure you want to delete this transaction?</p>
+                <i class="bi bi-trash3" style="font-size: 3rem; color: #EF4444;"></i>
+                <p class="fs-5 mt-3">Are you sure you want to delete this transaction?</p>
                 
-                <div class="alert alert-info">
-                    <strong>Category:</strong> {{ transaction.category }}<br>
-                    <strong>Amount:</strong> ${{ transaction.amount }}<br>
-                    <strong>Date:</strong> {{ transaction.date }}<br>
-                    <strong>Type:</strong> 
-                    {% if transaction.type == 'income' %}
-                        <span class="badge bg-success">Income</span>
-                    {% else %}
-                        <span class="badge bg-danger">Expense</span>
+                <div class="alert alert-info text-start" style="background: #F0FDF4; border-left: 4px solid #059669;">
+                    <div class="row">
+                        <div class="col-6">
+                            <strong>Category:</strong> {{ transaction.category }}<br>
+                            <strong>Amount:</strong> 
+                            <span class="{% if transaction.type == 'income' %}text-success{% else %}text-danger{% endif %} fw-bold">
+                                {% if transaction.type == 'income' %}+{% else %}-{% endif %} Rs. {{ transaction.amount }}
+                            </span>
+                        </div>
+                        <div class="col-6">
+                            <strong>Date:</strong> {{ transaction.date }}<br>
+                            <strong>Type:</strong> 
+                            {% if transaction.type == 'income' %}
+                                <span class="badge bg-success">Income</span>
+                            {% else %}
+                                <span class="badge bg-danger">Expense</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if transaction.description %}
+                    <div class="mt-2">
+                        <strong>Description:</strong> {{ transaction.description }}
+                    </div>
                     {% endif %}
                 </div>
                 
                 <form method="post">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger btn-lg">Yes, Delete</button>
-                    <a href="{% url 'transaction_list' %}" class="btn btn-secondary btn-lg">Cancel</a>
+                    <button type="submit" class="btn btn-danger btn-lg">
+                        <i class="bi bi-check-lg"></i> Yes, Delete
+                    </button>
+                    <a href="{% url 'transaction_list' %}" class="btn btn-secondary btn-lg">
+                        <i class="bi bi-x-lg"></i> Cancel
+                    </a>
                 </form>
             </div>
         </div>

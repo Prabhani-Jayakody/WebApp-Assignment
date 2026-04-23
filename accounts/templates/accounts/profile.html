@@ -1,26 +1,50 @@
-{% extends 'base.html' %}
+{% extends 'side_bar.html' %}
 
-{% block title %}My Profile{% endblock %}
-
-{% block content %}
+{% block dashboard_content %}
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">👤 My Profile</h4>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-person-circle"></i> My Profile</h4>
             </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <strong>Username:</strong> {{ user.username }}
-                </div>
-                <div class="mb-3">
-                    <strong>Email:</strong> {{ user.email }}
-                </div>
-                <div class="mb-3">
-                    <strong>Joined:</strong> {{ user.date_joined|date:"F j, Y" }}
-                </div>
-                <a href="/accounts/logout/" class="btn btn-danger">Logout</a>
-                <a href="{% url 'dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
+            <div class="card-body" style="padding: 2rem;">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Username</label>
+                            {{ u_form.username }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            {{ u_form.email }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Profile Picture</label>
+                        {{ p_form.profile_picture }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Phone</label>
+                        {{ p_form.phone }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        {{ p_form.address }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Bio</label>
+                        {{ p_form.bio }}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-primary" style="background: #6B7280;">Back</a>
+                </form>
             </div>
         </div>
     </div>

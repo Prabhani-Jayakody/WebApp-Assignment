@@ -1,39 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django import forms
-import re
-from django.core.exceptions import ValidationError
-
-def validate_password_strength(value):
-    if len(value) < 8:
-        raise ValidationError("Password must be at least 8 characters long.")
-
-    if not re.search(r"\d", value):
-        raise ValidationError("Password must contain at least one number.")
-
-    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", value):
-        raise ValidationError("Password must contain at least one special character.")
-
-class CustomUserCreationForm(UserCreationForm):
-
-    class Meta:
-        model = User
-        fields = ("username","email","password1","password2")
-
-    def clean_password1(self):
-        password = self.cleaned_data.get("password1")
-        validate_password_strength(password)
-        return password
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['username'].required = True
-        self.fields['username'].help_text = ""
-        self.fields['password2'].label = "Confirm Password"
+from .forms import CustomUserCreationForm, UserUpdateForm, ProfileUpdateForm
+from .models import Profile  
 
 # Register View
 def register_view(request):
@@ -41,8 +12,14 @@ def register_view(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            # Create profile for new user - THIS IS THE IMPORTANT PART
+            Profile.objects.create(user=user)
             messages.success(request, 'Account created! Please log in.')
             return redirect('login')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
@@ -50,31 +27,46 @@ def register_view(request):
 # Login View
 def login_view(request):
     if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
             login(request, user)
-            messages.success(request, f'Welcome back, {user.username}!')
+            messages.success(request, f'Welcome back, {username}!')
             return redirect('dashboard')
         else:
             messages.error(request, 'Invalid username or password.')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'accounts/login.html', {'form': form})
+    return render(request, 'accounts/login.html')
 
 # Logout View
 def logout_view(request):
     logout(request)
-    messages.info(request, 'You have been logged out.')
-    return redirect('login')
+    return redirect('home')
 
 # Profile View
 @login_required
 def profile_view(request):
-    return render(request, 'accounts/profile.html')
+    if request.method == 'POST':
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, 'Your profile has been updated!')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user.profile)
+    
+    context = {
+        'u_form': u_form,
+        'p_form': p_form,
+    }
+    return render(request, 'accounts/profile.html', context)
 
-from django.http import HttpResponse
-
+# Home View
 def home(request):
     if request.user.is_authenticated:
         return redirect('dashboard')

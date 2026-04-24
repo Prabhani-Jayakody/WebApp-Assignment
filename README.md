@@ -106,11 +106,11 @@ Mac/Linux: `python -m venv`
 
 ### 2. Add Transactions
 
--   Click "Add" in the navigation bar
+-   Click "Add transaction" in the side navigation bar
 
 -   Select transaction type (Income/Expense)
 
--   Enter amount, category, description, and date
+-   Enter amount, category, payment method, description (optional), and date
 
 -   Click "Save Transaction"
 
@@ -128,10 +128,8 @@ Mac/Linux: `python -m venv`
 
 -   Search by category or description
 
--   Filter by type (Income/Expense)
-
--   Filter by specific date
-
+-   Filter by type / payment method / category / description
+ 
 -   Export filtered data to CSV
 
 ### 5. Generate Reports
@@ -140,7 +138,7 @@ Mac/Linux: `python -m venv`
 
 -   Select date range (optional)
 
--   View interactive doughnut chart
+-   View interactive doughnut charts
 
 -   See expense breakdown by category
 
@@ -168,24 +166,15 @@ Mac/Linux: `python -m venv`
 | **date**        | DateField    | Transaction date     |
 
 ## 🎨 UI Features
-
--   Glass Morphism Navbar - Modern frosted glass effect
-
--   Gradient Cards - Beautiful color-coded stat cards
-
-    Income: Golden Amber gradient
-
-    Expenses: Rose Red gradient
-
-    Balance: Royal Blue gradient
-
--   Interactive Doughnut Chart - Visual expense distribution
-
--   Animated Progress Bars - Smooth loading animations
-
--   Responsive Tables - Hover effects and scaling
-
--   Mobile Friendly - Optimized for all screen sizes
+- Glass Morphism Navbar - Modern frosted glass effect with sticky positioning
+- Gradient Cards - Beautiful color-coded stat cards
+  - Income: Golden Amber gradient (#F59E0B to #D97706)
+  - Expenses: Rose Red gradient (#F87171 to #DC2626)
+  - Balance: Forest Green gradient (#1B5E52 to #0D3B35)
+- Interactive Doughnut Chart - Visual expense distribution with hover percentages
+- Animated Progress Bars - Smooth loading animations with CSS transitions
+- Responsive Tables - Hover effects, row highlighting, and mobile responsive
+- Mobile Friendly - Optimized for all screen sizes with collapsible sidebar
 
 ## 🔗 Links
 

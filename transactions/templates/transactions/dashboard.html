@@ -152,11 +152,11 @@
                             <span class="badge" style="background: {% if t.type == 'income' %}#34D399{% else %}#F87171{% endif %};">
                                 {{ t.category }}
                             </span>
-                        </td>
+                        </span>
                         <td>{{ t.description|default:"-"|truncatechars:30 }}</td>
                         <td class="{% if t.type == 'income' %}text-success{% else %}text-danger{% endif %} fw-bold">
                             {% if t.type == 'income' %}+{% else %}-{% endif %} Rs. {{ t.amount|floatformat:2|intcomma }}
-                        </td>
+                        </span>
                         <td>
                             <a href="{% url 'edit_transaction' t.id %}" class="btn btn-sm btn-primary" title="Edit">
                                 <i class="bi bi-pencil"></i>
@@ -164,8 +164,8 @@
                             <a href="{% url 'delete_transaction' t.id %}" class="btn btn-sm btn-danger" title="Delete">
                                 <i class="bi bi-trash"></i>
                             </a>
-                        </td>
-                    
+                        </span>
+                    </span>
 
                     {% empty %}
                     <tr>
@@ -173,8 +173,8 @@
                             <i class="bi bi-inbox" style="font-size: 2rem; color: #9CA3AF;"></i>
                             <p class="mt-2 text-muted">No transactions yet.</p>
                             <a href="{% url 'add_transaction' %}" class="btn btn-primary">Add Your First Transaction</a>
-                        </td>
-                    </tr>
+                        </span>
+                    </span>
                     {% endfor %}
                 </tbody>
             </table>
@@ -191,7 +191,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-    // Expense Distribution Chart
+    // Expense Distribution Chart - Shows percentages on hover
     const expenseCtx = document.getElementById('expenseChart').getContext('2d');
     new Chart(expenseCtx, {
         type: 'doughnut',
@@ -200,14 +200,28 @@
             datasets: [{
                 data: {{ category_values|safe }},
                 backgroundColor: ['#34D399', '#F59E0B', '#F87171', '#3B82F6', '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16', '#6B7280'],
-                borderWidth: 0
+                borderWidth: 0,
+                hoverOffset: 10
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: true,
             plugins: {
-                legend: { position: 'bottom' }
+                legend: { 
+                    position: 'bottom'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${label}: ${percentage}% (Rs. ${value.toLocaleString()})`;
+                        }
+                    }
+                }
             }
         }
     });

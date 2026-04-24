@@ -41,10 +41,6 @@ class CustomUserCreationForm(UserCreationForm):
         if not re.search(special_chars, password):
             raise ValidationError("Password must contain at least one special character (!@#$%^&* etc.).")
         
-        # Check for at least one uppercase letter
-        if not re.search(r'[A-Z]', password):
-            raise ValidationError("Password must contain at least one uppercase letter (A-Z).")
-        
         return password
     
     def __init__(self, *args, **kwargs):

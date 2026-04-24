@@ -5,38 +5,87 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-5">
-        <div class="card shadow">
-            <div class="card-header text-center">
-                <h4 class="mb-0"><i class="bi bi-box-arrow-in-right"></i> Login</h4>
-                    <small class="opacity-75">Welcome back! Please login to continue.</small>
+        <div class="card shadow" style="border-radius: 20px; overflow: hidden;">
+            
+            <!-- Header -->
+            <div class="card-header text-center" 
+                 style="background: linear-gradient(135deg, #0D3B35, #1B5E52); border: none; padding: 1.5rem;">
+                <h4 class="mb-0" style="color: white;">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </h4>
+                <small style="color: #A7F3D0;">
+                    Welcome back! Please log in to continue.
+                </small>
             </div>
+
+            <!-- Body -->
             <div class="card-body p-4">
+                
                 <form method="POST">
                     {% csrf_token %}
-                    {% if form.errors %}
-                        <div class="alert alert-danger rounded-3 mb-3">
-                            ❌ Invalid username or password. Please try again.
-                        </div>
+
+                    <!-- Error Message - Shows when login fails -->
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger text-center mb-4" 
+                         style="background: #FEE2E2; border: none; border-left: 5px solid #DC2626; border-radius: 12px; padding: 12px;">
+                        <i class="bi bi-exclamation-triangle-fill me-2" style="color: #DC2626;"></i>
+                        <strong style="color: #991B1B;">Invalid username or password. Please try again.</strong>
+                    </div>
                     {% endif %}
+                    
+                    <!-- Username -->
                     <div class="mb-3">
-                        <label class="form-label"><i class="bi bi-person"></i> Username</label>
-                        <input type="text" name="username" class="form-control" placeholder="Enter your username" required>
+                        <label class="form-label" style="color: #1B5E52; font-weight: 600;">Username</label>
+                        <input type="text" name="username"
+                               class="form-control"
+                               placeholder="Enter your username"
+                               required
+                               style="border-radius: 10px; border: 2px solid #E5E7EB; padding: 12px;">
                     </div>
+                    
+                    <!-- Password -->
                     <div class="mb-3">
-                        <label class="form-label"><i class="bi bi-lock"></i> Password</label>
-                        <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+                        <label class="form-label" style="color: #1B5E52; font-weight: 600;">Password</label>
+                        <input type="password" name="password"
+                               class="form-control"
+                               placeholder="Enter your password"
+                               required
+                               style="border-radius: 10px; border: 2px solid #E5E7EB; padding: 12px;">
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">
+                    
+                    <!-- Login Button -->
+                    <button type="submit"
+                            class="btn w-100"
+                            style="background: linear-gradient(135deg, #F59E0B, #D97706); color: #051E1A; padding: 12px; border-radius: 10px; font-weight: 700; border: none;">
                         <i class="bi bi-box-arrow-in-right"></i> Login
                     </button>
                 </form>
                 
-                <div class="auth-links">
-                    <p></i>Forgot your password? <a href="{% url 'password_reset' %}">Reset it here</a></p>
-                    <p></i>Don't have an account? <a href="{% url 'register' %}">Create one now</a></p>
+                <!-- Links -->
+                <div class="text-center mt-4 pt-2" style="border-top: 1px solid #E5E7EB;">
+                    <p class="mb-2" style="color: #6B7280;">
+                        <i class="bi bi-key"></i> Forgot your password? 
+                        <a href="{% url 'password_reset' %}" style="color: #F59E0B; text-decoration: none; font-weight: 500;">Reset it here</a>
+                    </p>
+                    <p class="mb-0" style="color: #6B7280;">
+                        <i class="bi bi-person-plus"></i> Don't have an account? 
+                        <a href="{% url 'register' %}" style="color: #F59E0B; text-decoration: none; font-weight: 500;">Create one now</a>
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .form-control:focus {
+        border-color: #059669 !important;
+        box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1) !important;
+        outline: none;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+</style>
 {% endblock %}

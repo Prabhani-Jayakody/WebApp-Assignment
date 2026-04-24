@@ -131,14 +131,7 @@
     
     <div class="main-content">
         <div class="container">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-            
+            <!-- NO MESSAGE POPUP FUNCTION - Removed completely -->
             {% block content %}
             {% endblock %}
         </div>

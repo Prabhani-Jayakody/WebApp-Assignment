@@ -3,8 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import AuthenticationForm
 from .forms import CustomUserCreationForm, UserUpdateForm, ProfileUpdateForm
-from .models import Profile  
+from .models import Profile
 
 # Register View
 def register_view(request):
@@ -12,7 +13,6 @@ def register_view(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # Create profile for new user - THIS IS THE IMPORTANT PART
             Profile.objects.create(user=user)
             messages.success(request, 'Account created! Please log in.')
             return redirect('login')
@@ -24,23 +24,26 @@ def register_view(request):
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
 
-# Login View
+# Login View - CORRECTED
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
             login(request, user)
-            messages.success(request, f'Welcome back, {username}!')
+            messages.success(request, f'Welcome back, {user.username}!')
             return redirect('dashboard')
         else:
-            messages.error(request, 'Invalid username or password.')
-    return render(request, 'accounts/login.html')
+            # Form is invalid - template will show the error
+            return render(request, 'accounts/login.html', {'form': form})
+    else:
+        form = AuthenticationForm()
+    return render(request, 'accounts/login.html', {'form': form})
 
 # Logout View
 def logout_view(request):
     logout(request)
+    messages.info(request, 'You have been logged out.')
     return redirect('home')
 
 # Profile View

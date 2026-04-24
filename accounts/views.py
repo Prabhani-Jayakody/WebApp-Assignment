@@ -14,7 +14,7 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             Profile.objects.create(user=user)
-            messages.success(request, 'Account created! Please log in.')
+            # REMOVED success message
             return redirect('login')
         else:
             for field, errors in form.errors.items():
@@ -24,26 +24,25 @@ def register_view(request):
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
 
-# Login View - CORRECTED
+# Login View - NO WELCOME MESSAGE
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            messages.success(request, f'Welcome back, {user.username}!')
+            # REMOVED welcome message
             return redirect('dashboard')
         else:
-            # Form is invalid - template will show the error
             return render(request, 'accounts/login.html', {'form': form})
     else:
         form = AuthenticationForm()
     return render(request, 'accounts/login.html', {'form': form})
 
-# Logout View
+# Logout View - NO LOGOUT MESSAGE
 def logout_view(request):
     logout(request)
-    messages.info(request, 'You have been logged out.')
+    # REMOVED logout message
     return redirect('home')
 
 # Profile View

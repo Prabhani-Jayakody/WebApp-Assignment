@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_protect
 from .forms import CustomUserCreationForm, UserUpdateForm, ProfileUpdateForm
 from .models import Profile
 
@@ -13,10 +12,10 @@ from .models import Profile
 # Register View
 @never_cache
 def register_view(request):
-    # If already logged in, show message and redirect
+    # If user is already logged in, redirect to dashboard
     if request.user.is_authenticated:
         messages.info(request, 'ℹ️ You are already logged in!')
-        return redirect('dashboard')
+        return redirect('dashboard')  # Changed back to 'dashboard'
     
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -25,26 +24,27 @@ def register_view(request):
             Profile.objects.create(user=user)
             return redirect('login')
         else:
+            # Errors will be shown inside the card via {{ form.errors }}
             pass
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
 
 
-# Login View - With message when already logged in
+# Login View
 @never_cache
 def login_view(request):
     # If already logged in, show message and redirect to dashboard
     if request.user.is_authenticated:
         messages.info(request, 'ℹ️ You are already logged in!')
-        return redirect('dashboard')
+        return redirect('dashboard')  # Changed back to 'dashboard'
     
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('dashboard')
+            return redirect('dashboard')  # Changed back to 'dashboard'
         else:
             return render(request, 'accounts/login.html', {'form': form})
     else:
@@ -85,5 +85,5 @@ def profile_view(request):
 # Home View
 def home(request):
     if request.user.is_authenticated:
-        return redirect('dashboard')
+        return redirect('dashboard')  # Changed back to 'dashboard'
     return render(request, 'home.html')

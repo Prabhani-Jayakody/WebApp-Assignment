@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.humanize',  # ← ADDED: For number formatting (commas, etc.)
+    'django.contrib.humanize',  # For number formatting (commas, etc.)
     'accounts',
     'transactions',
 ]
@@ -92,6 +92,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -107,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Colombo'  # ← CHANGED: Set to Sri Lanka timezone
+TIME_ZONE = 'Asia/Colombo'  # Sri Lanka timezone
 
 USE_I18N = True
 
@@ -130,9 +133,12 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Authentication URLs
-LOGIN_URL = '/login/'  # ← FIXED: Changed to match your URL pattern
-LOGIN_REDIRECT_URL = '/transactions/'  # ← FIXED: Redirect to dashboard after login
-LOGOUT_REDIRECT_URL = '/'  # ← ADDED: Redirect to home after logout
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/transactions/'  # Redirect to dashboard after login
+LOGOUT_REDIRECT_URL = '/'  # Redirect to home after logout
+
+# Password Reset Settings
+PASSWORD_RESET_TIMEOUT = 86400  # 24 hours in seconds
 
 # Email backend (for password reset, etc.)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

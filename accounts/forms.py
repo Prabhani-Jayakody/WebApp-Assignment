@@ -1,9 +1,10 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 import re
 from .models import Profile
+
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(
@@ -40,6 +41,10 @@ class CustomUserCreationForm(UserCreationForm):
         if not re.search(special_chars, password):
             raise ValidationError("Password must contain at least one special character (!@#$%^&* etc.).")
         
+        # Check for at least one uppercase letter
+        if not re.search(r'[A-Z]', password):
+            raise ValidationError("Password must contain at least one uppercase letter (A-Z).")
+        
         return password
     
     def __init__(self, *args, **kwargs):
@@ -68,6 +73,29 @@ class CustomUserCreationForm(UserCreationForm):
         # Remove help texts for other fields
         self.fields['username'].help_text = None
 
+
+# Custom SetPasswordForm for password reset with validation
+class CustomSetPasswordForm(SetPasswordForm):
+    def clean_new_password1(self):
+        password = self.cleaned_data.get('new_password1')
+        
+        # Check minimum length
+        if len(password) < 8:
+            raise ValidationError("Password must be at least 8 characters long.")
+        
+        # Check for at least one number
+        if not re.search(r'\d', password):
+            raise ValidationError("Password must contain at least one number (0-9).")
+        
+        # Check for at least one special character
+        special_chars = r'[!@#$%^&*(),.?":{}|<>]'
+        if not re.search(special_chars, password):
+            raise ValidationError("Password must contain at least one special character (!@#$%^&* etc.).")
+
+        
+        return password
+
+
 class UserUpdateForm(forms.ModelForm):
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={'class': 'form-control'})
@@ -81,6 +109,7 @@ class UserUpdateForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({'class': 'form-control'})
         self.fields['email'].widget.attrs.update({'class': 'form-control'})
+
 
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:

@@ -43,14 +43,22 @@
                                style="border-radius: 10px; border: 2px solid #E5E7EB; padding: 12px;">
                     </div>
                     
-                    <!-- Password -->
+                    <!-- Password with Eye Toggle -->
                     <div class="mb-3">
                         <label class="form-label" style="color: #1B5E52; font-weight: 600;">Password</label>
-                        <input type="password" name="password"
-                               class="form-control"
-                               placeholder="Enter your password"
-                               required
-                               style="border-radius: 10px; border: 2px solid #E5E7EB; padding: 12px;">
+                        <div class="input-group">
+                            <input type="password" name="password" id="passwordField"
+                                   class="form-control"
+                                   placeholder="Enter your password"
+                                   required
+                                   style="border-radius: 10px 0 0 10px; border: 2px solid #E5E7EB; padding: 12px; border-right: none;">
+                            <button type="button"
+                                    class="btn btn-outline-secondary"
+                                    onclick="togglePassword()"
+                                    style="border-radius: 0 10px 10px 0; background: white; border: 2px solid #E5E7EB; border-left: none;">
+                                <i class="bi bi-eye" id="eyeIcon" style="color: #6B7280;"></i>
+                            </button>
+                        </div>
                     </div>
                     
                     <!-- Login Button -->
@@ -88,4 +96,22 @@
         transform: translateY(-2px);
     }
 </style>
+
+<script>
+    function togglePassword() {
+        const field = document.getElementById("passwordField");
+        const icon = document.getElementById("eyeIcon");
+
+        if (field.type === "password") {
+            field.type = "text";
+            icon.classList.remove("bi-eye");
+            icon.classList.add("bi-eye-slash");
+        } else {
+            field.type = "password";
+            icon.classList.remove("bi-eye-slash");
+            icon.classList.add("bi-eye");
+        }
+    }
+</script>
+
 {% endblock %}

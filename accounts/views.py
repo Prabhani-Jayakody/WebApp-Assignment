@@ -4,34 +4,46 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
 from .forms import CustomUserCreationForm, UserUpdateForm, ProfileUpdateForm
 from .models import Profile
 
+
 # Register View
+@never_cache
 def register_view(request):
+    # If already logged in, show message and redirect
+    if request.user.is_authenticated:
+        messages.info(request, 'ℹ️ You are already logged in!')
+        return redirect('dashboard')
+    
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             Profile.objects.create(user=user)
-            # REMOVED success message
             return redirect('login')
         else:
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field}: {error}")
+            pass
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
 
-# Login View - NO WELCOME MESSAGE
+
+# Login View - With message when already logged in
+@never_cache
 def login_view(request):
+    # If already logged in, show message and redirect to dashboard
+    if request.user.is_authenticated:
+        messages.info(request, 'ℹ️ You are already logged in!')
+        return redirect('dashboard')
+    
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            # REMOVED welcome message
             return redirect('dashboard')
         else:
             return render(request, 'accounts/login.html', {'form': form})
@@ -39,11 +51,12 @@ def login_view(request):
         form = AuthenticationForm()
     return render(request, 'accounts/login.html', {'form': form})
 
-# Logout View - NO LOGOUT MESSAGE
+
+# Logout View
 def logout_view(request):
     logout(request)
-    # REMOVED logout message
     return redirect('home')
+
 
 # Profile View
 @login_required
@@ -54,7 +67,7 @@ def profile_view(request):
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
-            messages.success(request, 'Your profile has been updated!')
+            messages.success(request, '✅ Your profile has been updated!')
             return redirect('profile')
         else:
             messages.error(request, 'Please correct the errors below.')
@@ -67,6 +80,7 @@ def profile_view(request):
         'p_form': p_form,
     }
     return render(request, 'accounts/profile.html', context)
+
 
 # Home View
 def home(request):

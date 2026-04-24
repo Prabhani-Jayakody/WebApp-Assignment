@@ -94,6 +94,16 @@
             transform: translateX(5px);
         }
         
+        .sidebar a.active {
+            background: linear-gradient(135deg, #238B75, #34D399);
+            color: #051E1A;
+            font-weight: 600;
+        }
+        
+        .sidebar a.active i {
+            color: #051E1A;
+        }
+        
         .logout-btn {
             color: #F87171 !important;
         }
@@ -221,15 +231,24 @@
             <small>{{ user.email }}</small>
         </div>
         
-        <a href="{% url 'dashboard' %}">📊 Dashboard</a>
-        <a href="{% url 'add_transaction' %}">➕ Add Transaction</a>
-        <a href="{% url 'transaction_list' %}">📋 Transactions</a>
-        <a href="{% url 'reports' %}">📈 Reports</a>
-        <a href="{% url 'profile' %}">👤 Profile</a>
+        <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            📊 Dashboard
+        </a>
+        <a href="{% url 'add_transaction' %}" class="{% if request.resolver_match.url_name == 'add_transaction' %}active{% endif %}">
+            ➕ Add Transaction
+        </a>
+        <a href="{% url 'transaction_list' %}" class="{% if request.resolver_match.url_name == 'transaction_list' %}active{% endif %}">
+            📋 Transactions
+        </a>
+        <a href="{% url 'reports' %}" class="{% if request.resolver_match.url_name == 'reports' %}active{% endif %}">
+            📈 Reports
+        </a>
+        <a href="{% url 'profile' %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+            👤 Profile
+        </a>
         
         <hr>
         
-        <a href="{% url 'home' %}">🏠 Home</a>
         <a href="{% url 'logout' %}" class="logout-btn">🚪 Logout</a>
     </div>
     

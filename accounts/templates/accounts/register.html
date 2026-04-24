@@ -5,10 +5,10 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <div class="card shadow">
-            <div class="card-header text-center">
-               <h4 class="mb-0"><i class="bi bi-person-plus"></i> Create Account</h4>
-                    <small class="opacity-75">Start tracking your expenses today!</small>
+        <div class="card shadow" style="border-radius: 20px; overflow: hidden;">
+            <div class="card-header text-center" style="background: linear-gradient(135deg, #0D3B35, #1B5E52); border: none; padding: 1.5rem;">
+                <h4 class="mb-0" style="color: white;"><i class="bi bi-person-plus"></i> Create Account</h4>
+                <small style="color: #A7F3D0;">Start tracking your expenses today!</small>
             </div>
             <div class="card-body p-4">
                 <form method="POST">
@@ -16,8 +16,8 @@
                     
                     <!-- Username -->
                     <div class="mb-3">
-                        <label class="form-label"><i class="bi bi-person"></i> Username</label>
-                        <input type="text" name="username" class="form-control" placeholder="Enter your username" required>
+                        <label class="form-label" style="color: #1B5E52; font-weight: 600;"><i class="bi bi-person"></i> Username</label>
+                        <input type="text" name="username" class="form-control" placeholder="Enter your username" required style="border-radius: 10px; border: 2px solid #E5E7EB; padding: 12px;">
                         {% if form.username.errors %}
                             <div class="text-danger small mt-1">
                                 {{ form.username.errors }}
@@ -27,8 +27,8 @@
 
                     <!-- Email -->
                     <div class="mb-3">
-                        <label class="form-label"><i class="bi bi-envelope"></i> Email</label>
-                        <input type="email" name="email" class="form-control" placeholder="Enter your email address" required>
+                        <label class="form-label" style="color: #1B5E52; font-weight: 600;"><i class="bi bi-envelope"></i> Email</label>
+                        <input type="email" name="email" class="form-control" placeholder="Enter your email address" required style="border-radius: 10px; border: 2px solid #E5E7EB; padding: 12px;">
                         {% if form.email.errors %}
                             <div class="text-danger small mt-1">
                                 {{ form.email.errors }}
@@ -38,14 +38,14 @@
 
                     <!-- Password -->
                     <div class="mb-3">
-                        <label class="form-label"><i class="bi bi-lock"></i> Password</label>
+                        <label class="form-label" style="color: #1B5E52; font-weight: 600;"><i class="bi bi-lock"></i> Password</label>
                         <div class="input-group">
-                            {{ form.password1 }}
-                            <span class="input-group-text" onclick="togglePassword('{{ form.password1.id_for_label }}')" style="cursor:pointer;">
-                                <i class="bi bi-eye"></i>
+                            <input type="password" name="password1" id="id_password1" class="form-control" placeholder="Enter your password" required style="border-radius: 10px 0 0 10px; border: 2px solid #E5E7EB; padding: 12px;">
+                            <span class="input-group-text" onclick="togglePassword('id_password1')" style="cursor:pointer; border-radius: 0 10px 10px 0; background: white; border: 2px solid #E5E7EB; border-left: none;">
+                                <i class="bi bi-eye" id="eyeIcon1" style="color: #6B7280;"></i>
                             </span>
                         </div>
-                        <small class="text-muted">
+                        <small class="text-muted" style="color: #6B7280 !important;">
                             <i class="bi bi-info-circle"></i> Password must be at least 8 characters with at least one number and one special character.
                         </small>
                         {% if form.password1.errors %}
@@ -57,11 +57,11 @@
                     
                     <!-- Confirm Password -->
                     <div class="mb-3">
-                        <label class="form-label"><i class="bi bi-lock-fill"></i> Confirm Password</label>
+                        <label class="form-label" style="color: #1B5E52; font-weight: 600;"><i class="bi bi-lock-fill"></i> Confirm Password</label>
                         <div class="input-group">
-                            {{ form.password2 }}
-                            <span class="input-group-text" onclick="togglePassword('{{ form.password2.id_for_label }}')" style="cursor:pointer;">
-                                <i class="bi bi-eye"></i>
+                            <input type="password" name="password2" id="id_password2" class="form-control" placeholder="Confirm your password" required style="border-radius: 10px 0 0 10px; border: 2px solid #E5E7EB; padding: 12px;">
+                            <span class="input-group-text" onclick="togglePassword('id_password2')" style="cursor:pointer; border-radius: 0 10px 10px 0; background: white; border: 2px solid #E5E7EB; border-left: none;">
+                                <i class="bi bi-eye" id="eyeIcon2" style="color: #6B7280;"></i>
                             </span>
                         </div>
                         {% if form.password2.errors %}
@@ -72,24 +72,49 @@
                     </div>
 
                     <!-- Submit -->
-                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
+                    <button type="submit" class="btn w-100 py-2 fw-bold" style="background: linear-gradient(135deg, #F59E0B, #D97706); color: #051E1A; border: none; border-radius: 10px;">
                         <i class="bi bi-person-check"></i> Create My Account
                     </button>
                 </form>
                 
-                <div class="auth-links">
-                    <p><i class="bi bi-box-arrow-in-right"></i> Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+                <!-- Auth Links - Centered -->
+                <div class="text-center mt-4 pt-2" style="border-top: 1px solid #E5E7EB;">
+                    <p class="mb-0" style="color: #6B7280;">
+                        <i class="bi bi-box-arrow-in-right"></i> Already have an account? 
+                        <a href="{% url 'login' %}" style="color: #F59E0B; text-decoration: none; font-weight: 500;">Login here</a>
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<style>
+    .form-control:focus {
+        border-color: #059669 !important;
+        box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1) !important;
+        outline: none;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+    
+    .card {
+        background: white;
+    }
+</style>
+
 <script>
     function togglePassword(fieldId) {
         let field = document.getElementById(fieldId);
-        // Find the icon in the same input-group
-        let icon = field.parentElement.querySelector(".input-group-text i");
+        let icon;
+        
+        if (fieldId === 'id_password1') {
+            icon = document.getElementById('eyeIcon1');
+        } else {
+            icon = document.getElementById('eyeIcon2');
+        }
         
         if (field.type === "password") {
             field.type = "text";
@@ -102,5 +127,4 @@
         }
     }
 </script>
-
 {% endblock %}

@@ -18,11 +18,14 @@
             min-height: 100vh;
         }
         
-        /* Top Navbar - Only shows on non-authenticated pages */
+        /* Top Navbar */
         .top-navbar {
             background: #0A2F2A;
             padding: 1rem 0;
             border-bottom: 1px solid #238B75;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
         
         .navbar-brand {
@@ -32,7 +35,6 @@
             text-decoration: none;
         }
         
-        /* Buttons without emojis */
         .btn-register {
             background: #F59E0B;
             color: #051E1A;
@@ -66,129 +68,6 @@
             color: #051E1A;
         }
         
-        /* Hero Section */
-        .hero-card {
-            background: linear-gradient(135deg, #0D3B35, #1B5E52);
-            border-radius: 20px;
-            padding: 3rem;
-            text-align: center;
-            margin: 2rem 0;
-            transition: all 0.3s;
-        }
-        
-        .hero-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        
-        .hero-title { font-size: 3rem; font-weight: 800; color: white; margin-bottom: 0.5rem; }
-        .hero-slogan { font-size: 1.3rem; color: #A7F3D0; margin-bottom: 1rem; }
-        .hero-description { color: #D1D5DB; max-width: 600px; margin: 1rem auto; line-height: 1.6; }
-        
-        /* Feature Cards */
-        .feature-card {
-            background: white;
-            color: #0A2F2A;
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            height: 100%;
-            transition: all 0.3s;
-        }
-        
-        .feature-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        
-        .feature-icon {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto 1rem;
-            background: linear-gradient(135deg, #1B5E52, #238B75);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .feature-icon i { font-size: 2rem; color: white; }
-        
-        /* Stat Cards */
-        .stat-card {
-            background: white;
-            color: #0A2F2A;
-            padding: 1.8rem;
-            border-radius: 15px;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        
-        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
-        .stat-card i { font-size: 2rem; margin-bottom: 0.5rem; }
-        .stat-card h6 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #1B5E52; }
-        .stat-card h4 { font-size: 1.8rem; font-weight: 800; color: #0A2F2A; }
-        
-        /* Auth Card */
-        .auth-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        
-        .auth-header {
-            background: linear-gradient(135deg, #0D3B35, #1B5E52);
-            color: white;
-            padding: 1.5rem;
-            text-align: center;
-        }
-        
-        /* Forms */
-        .form-control {
-            border-radius: 10px;
-            border: 2px solid #E5E7EB;
-            padding: 12px 16px;
-            width: 100%;
-        }
-        
-        .form-control:focus {
-            border-color: #238B75;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(35, 139, 117, 0.2);
-        }
-        
-        .form-label { color: #1B5E52; font-weight: 600; margin-bottom: 8px; display: block; }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #F59E0B, #D97706);
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            border: none;
-            font-weight: 600;
-            width: 100%;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3); }
-        
-        /* Alerts */
-        .alert {
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-        }
-        
-        .alert-success {
-            background: #D1FAE5;
-            color: #051E1A;
-            border-left: 4px solid #238B75;
-        }
-        
-        .alert-info {
-            background: #DBEAFE;
-            color: #1E3A8A;
-            border-left: 4px solid #3B82F6;
-        }
-        
         .main-content { min-height: calc(100vh - 80px); padding: 2rem 0; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         
@@ -199,26 +78,45 @@
             margin: 2rem 0;
         }
         
-        footer {
+        /* Footer */
+        .footer {
             background: #0A2F2A;
-            text-align: center;
-            padding: 1.5rem;
+            padding: 3rem 0 2rem;
             margin-top: 3rem;
             border-top: 1px solid #238B75;
-            color: #9CA3AF;
         }
+        .footer h5 { color: #34D399; font-size: 1.1rem; margin-bottom: 1rem; }
+        .footer p, .footer a { color: #9CA3AF; font-size: 0.85rem; text-decoration: none; }
+        .footer a:hover { color: #34D399; }
+        .footer i { margin-right: 8px; color: #34D399; }
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: all 0.3s;
+        }
+        .social-links a:hover { background: #34D399; transform: translateY(-3px); }
+        .social-links a:hover i { color: #051E1A; }
+        .footer-bottom { text-align: center; padding-top: 2rem; margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .footer-bottom p { color: #6B7280; font-size: 0.8rem; margin: 0; }
         
         .text-muted { color: #6B7280 !important; }
         
         @media (max-width: 768px) {
-            .hero-title { font-size: 2rem; }
-            .hero-card { padding: 2rem; }
-            .stat-card h4 { font-size: 1.3rem; }
+            .navbar-brand { font-size: 1.2rem; }
+            .btn-register, .btn-login { padding: 6px 16px; font-size: 0.8rem; }
+            .footer .row > div { margin-bottom: 1.5rem; text-align: center; }
+            .social-links { justify-content: center; }
         }
     </style>
 </head>
 <body>
-    <!-- Navbar - Only on base.html (home, login, register) -->
+    <!-- Navbar - Sticky -->
     <nav class="top-navbar">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
@@ -246,27 +144,37 @@
         </div>
     </div>
     
-    <footer>
+    <!-- Footer - Appears on all pages -->
+    <footer class="footer">
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <h5 style="color: #34D399;">About Us</h5>
-                    <p style="color: #9CA3AF;">ExpenseWise helps you track expenses, manage budgets, and achieve financial freedom.</p>
+                    <h5>💰 ExpenseWise</h5>
+                    <p>Smart financial management for a better tomorrow. Track your expenses, manage budgets, and achieve your financial goals.</p>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <h5 style="color: #34D399;">Quick Links</h5>
-                    <p><a href="{% url 'home' %}" style="color: #9CA3AF; text-decoration: none;">Home</a></p>
-                    <p><a href="{% url 'register' %}" style="color: #9CA3AF; text-decoration: none;">Register</a></p>
-                    <p><a href="{% url 'login' %}" style="color: #9CA3AF; text-decoration: none;">Login</a></p>
+                    <h5>Quick Links</h5>
+                    <p><a href="{% url 'home' %}">🏠 Home</a></p>
+                    <p><a href="{% url 'register' %}">📝 Register</a></p>
+                    <p><a href="{% url 'login' %}">🔐 Login</a></p>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <h5 style="color: #34D399;">Contact</h5>
-                    <p style="color: #9CA3AF;"><i class="bi bi-envelope"></i> support@expensewise.com</p>
-                    <p style="color: #9CA3AF;"><i class="bi bi-telephone"></i> +94 11 234 5678</p>
+                    <h5>Contact Us</h5>
+                    <p><i class="bi bi-envelope"></i> support@expensewise.com</p>
+                    <p><i class="bi bi-telephone"></i> +94 11 234 5678</p>
+                    <p><i class="bi bi-geo-alt"></i> Colombo, Sri Lanka</p>
+                    <div class="social-links mt-2">
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-linkedin"></i></a>
+                    </div>
                 </div>
             </div>
-            <hr style="margin: 1rem 0;">
-            <p style="color: #6B7280;">© 2026 ExpenseWise | Stay wise with your money</p>
+            <div class="footer-bottom">
+                <p>💰 ExpenseWise | Stay wise with your money © 2026 | All Rights Reserved</p>
+                <p><a href="#" style="color: #6B7280;">Privacy Policy</a> | <a href="#" style="color: #6B7280;">Terms of Service</a></p>
+            </div>
         </div>
     </footer>
     
